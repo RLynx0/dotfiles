@@ -1,0 +1,23 @@
+#!/usr/bin/bash
+
+while getopts "a:i:h" arg; do
+    case $arg in
+    a)
+        alert_file="$OPTARG"
+        ;;
+    i)
+        alert_icon="$OPTARG"
+        ;;
+    *)
+        echo "Usage: $(basename $0) [-a <Alert File>] [-i <Alert Icon>]"
+        exit 1
+    esac
+done
+shift $(($OPTIND-1))
+
+
+sudo $(awk '/With/ {$1=$2=""; print}' /etc/pacman.d/mirrorlist)
+command -v alert > /dev/null &&
+    [[ "$alert_file" != "" ]] &&
+    alert -f "$alert_file" -n "$(basename $0)" -i "$alert_icon" 'Done!' ||
+    echo 'Done!'

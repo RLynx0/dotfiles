@@ -1,6 +1,8 @@
-BEGIN { sec = 0 }
-/^#/ { sec += 1 }
+/^#/ {
+  sec = $0
+  next
+}
 
-sec == 2 && /^[^#\n]/ && $1 {
+sec ~ /^# Players/ && $1 {
   print "playerctl play -p " $1
 }

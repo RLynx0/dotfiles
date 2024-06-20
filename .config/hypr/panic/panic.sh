@@ -32,11 +32,8 @@ delta="10"
 
 
 # get options and overwrite variables
-while getopts "td:s:pih" arg; do
+while getopts "d:s:pih" arg; do
   case $arg in
-  t)
-    debug="yes"
-    ;;
   d)
     delta="$OPTARG"
     ;;
@@ -120,19 +117,24 @@ if [ "$output_info" != "" ]; then
 fi
 
 hyprctl monitors | awk -f "$awk_compress" > "$temp"
-command -v playerctl && player_data >> "$temp"
+command -v playerctl \
+&& player_data >> "$temp" \ # Save active players
+&& playerctl -a pause       # Pause all players
 
 if [ "$(last_data_path)" -a -z "$force_panic" ]; then
-  # unpanic
+  # UNPANIC
   data="$(last_data_path)"
-  eval "$(awk -f "$awk_unpanic" "$data" "$temp")"
-  command -v playerctl && eval "$(awk -f "$awk_unpause" "$data")"
+  eval "$(awk -v d="0" -f "$awk_panic" "$temp")"  # Toggle off special workspaces
+  eval "$(awk -f "$awk_unpanic" "$data" "$temp")" # Restore the monitor state before panicking
+  command -v playerctl && eval "$(awk -f "$awk_unpause" "$data")" # Unpause previously active players
   rm "$temp" "$data"
 else
-  # panic
+  # PANIC
+  # Send each monitor to it's active workspace + delta
+  # Also, toggle off special workspaces
   eval "$(awk -v d="$delta" -f "$awk_panic" "$temp")"
-  command -v playerctl && playerctl -a pause
-  command -v makoctl && makoctl dismiss --all
+  command -v makoctl && makoctl dismiss --all # Dismiss notifications
+  pkill wofi 2> /dev/null                     # Close menu if open
   mv "$temp" "$(new_data_path)"
 fi
 

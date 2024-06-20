@@ -1,16 +1,19 @@
-/^#/ { sec = $0 }
-
-sec != "Players" && /^[^#\n]/ && NR == FNR {
-  w[$1] = $2
-  s[$1] = $3
+/^#/ {
+  sec = $0
   next
 }
 
-sec != "Players" && /^[^#\n]/ && w[$1] {
-  print "hyprctl dispatch focusmonitor", $1
-  print "hyprctl dispatch workspace", w[$1]
-}
+sec ~ /^# Monitor/ && $0 {
+  if (NR == FNR) {
+    w[$1] = $2
+    s[$1] = $3
+    next
+  }
 
-sec != "Players" && /^[^#\n]/ && s[$1] {
-  print "hyprctl dispatch togglespecialworkspace", s[$1]
+  if (w[$1]) {
+    print "hyprctl dispatch focusmonitor", $1
+    print "hyprctl dispatch workspace", w[$1]
+  }
+
+  if (s[$1]) print "hyprctl dispatch togglespecialworkspace", s[$1]
 }

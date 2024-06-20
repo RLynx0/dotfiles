@@ -89,7 +89,7 @@
   },
   "network": {
     "format": "{ifname}",
-    "format-wifi": "   {signalStrength}%",
+    "format-wifi": "    {signalStrength}%",
     "format-ethernet": "󰈀  {ifname}",
     "format-disconnected": "Disconnected",
     "tooltip-format": "{ifname} via {gwaddri}",
@@ -97,7 +97,7 @@
     "tooltip-format-ethernet": "󰈀  {ifname}\nIP: {ipaddr}\n up: {bandwidthUpBits} down: {bandwidthDownBits}",
     "tooltip-format-disconnected": "Disconnected",
     "on-click": "nm-connection-editor",
-    "on-click-right": "kitty --title 'nmtui <floating>' nmtui",
+    "on-click-right": "kitty --title 'nmtui <floating>' sh -c 'sleep 0.2 && nmtui'",
     "max-length": 80
   },
   "cpu": {
@@ -123,17 +123,17 @@
       "warning": 30,
       "critical": 15
     },
-    "format": "{icon}  {capacity}%",
-    "format-alt": "{icon}  {time}",
+    "format": "{icon} {capacity}%",
+    "format-alt": "{icon} {time}",
     "format-icons": {
       "charging": " ",
       "plugged": " ",
       "default": [
-        " ",
-        " ",
-        " ",
-        " ",
-        " "
+        "  ",
+        "  ",
+        "  ",
+        "  ",
+        "  "
       ]
     }
   },
@@ -141,52 +141,24 @@
     "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
     "format-alt": "{:%Y-%m-%d - %H:%M}"
   },
+  "custom/appmenu": {
+    "format": " ",
+    "on-click": "wofi --insensitive --allow-images --show drun",
+    "tooltip": false
+  },
+  "custom/hyprpanic": {
+    "format": "{}",
+    "return-type": "json",
+    "escape": true,
+    "tooltip": true,
+    "signal": 1,
+    "exec": "~/.config/hypr/panic/panic.sh -i",
+    "on-click": "~/.config/hypr/panic/panic.sh -s 1"
+  },
   "custom/cliphist": {
     "format": " ",
     "on-click": "~/.config/scripts/clipboard.sh",
     "on-click-right": "~/.config/scripts/clipboard.sh delete",
-    "tooltip": false
-  },
-  "custom/updates": {
-    "format": "  {}",
-    "tooltip-format": "{}",
-    "escape": true,
-    "return-type": "json",
-    "exec": "~/dotfiles/scripts/updates.sh",
-    "restart-interval": 60,
-    "on-click": "alacritty --class dotfiles-floating -e ~/dotfiles/scripts/installupdates.sh",
-    "on-click-right": "~/dotfiles/.settings/software.sh",
-    "tooltip": false
-  },
-  "custom/wallpaper": {
-    "format": " ",
-    "on-click": "~/dotfiles/hypr/scripts/wallpaper.sh select",
-    "on-click-right": "~/dotfiles/hypr/scripts/wallpaper.sh",
-    "tooltip": false
-  },
-  "custom/waybarthemes": {
-    "format": "",
-    "on-click": "~/dotfiles/waybar/themeswitcher.sh",
-    "tooltip": false
-  },
-  "custom/settings": {
-    "format": " ",
-    "on-click": "alacritty --class dotfiles-floating -e ~/dotfiles/hypr/start-settings.sh",
-    "tooltip": false
-  },
-  "custom/keybindings": {
-    "format": " ",
-    "on-click": "~/dotfiles/hypr/scripts/keybindings.sh",
-    "tooltip": false
-  },
-  "custom/filemanager": {
-    "format": " ",
-    "on-click": "~/dotfiles/.settings/filemanager.sh",
-    "tooltip": false
-  },
-  "custom/appmenu": {
-    "format": " ",
-    "on-click": "wofi --insensitive --allow-images --show drun",
     "tooltip": false
   },
   "custom/exit": {

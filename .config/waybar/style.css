@@ -55,10 +55,7 @@ button:hover {
   color: #fff;
   font-weight: bold;
   padding: 0 5px;
-}
-
-#workspaces button:hover {
-  background: rgba(0, 0, 0, 0.2);
+  border-radius: 1.2em;
 }
 
 #workspaces button.focused {
@@ -81,8 +78,10 @@ button:hover {
 #battery,
 #clock,
 #custom-appmenu,
+#custom-updates,
 #custom-cliphist,
 #custom-exit,
+#custom-hyprpanic,
 .group-child * {
   min-width: 1.2em;
   background-color: rgba(80, 80, 80, 0.5);
@@ -118,7 +117,7 @@ button:hover {
 }
 
 /* If workspaces is the rightmost module, omit right margin */
-.modules-right>widget:last-child>#workspaces {
+.modules-right>w.panickedidget:last-child>#workspaces {
   margin-right: 0;
 }
 
@@ -126,7 +125,8 @@ label:focus {
   background-color: #000000;
 }
 
-#battery {
+#battery,
+#custom-hyprpanic {
   font-weight: bold;
 }
 
@@ -161,7 +161,8 @@ label:focus {
   }
 }
 
-#battery.critical:not(.charging) {
+#battery.critical:not(.charging),
+#custom-hyprpanic.panicked {
   color: #d05850;
   animation-name: blink;
   animation-duration: 0.6s;

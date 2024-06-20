@@ -34,6 +34,7 @@
 
 	"modules-left": [
 		"custom/appmenu",
+		"custom/hyprpanic",
 		"wlr/taskbar",
 		"hyprland/window",
 	],
@@ -43,7 +44,6 @@
 	],
 
 	"modules-right": [
-		"custom/updates",
 		"custom/cliphist",
 		"group/audio",
 		"bluetooth",

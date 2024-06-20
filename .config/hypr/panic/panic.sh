@@ -117,9 +117,10 @@ if [ "$output_info" != "" ]; then
 fi
 
 hyprctl monitors | awk -f "$awk_compress" > "$temp"
-command -v playerctl \
-&& player_data >> "$temp" \ # Save active players
-&& playerctl -a pause       # Pause all players
+if command -v playerctl; then
+  player_data >> "$temp" \ # Save active players
+  playerctl -a pause       # Pause all players
+fi
 
 if [ "$(last_data_path)" -a -z "$force_panic" ]; then
   # UNPANIC

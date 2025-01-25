@@ -1,0 +1,250 @@
+/*                                                                     #
+#         ██╗    ██╗ █████╗ ██╗   ██╗██████╗  █████╗ ██████╗           #
+#         ██║    ██║██╔══██╗╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗          #
+#         ██║ █╗ ██║███████║ ╚████╔╝ ██████╔╝███████║██████╔╝          #
+#         ██║███╗██║██╔══██║  ╚██╔╝  ██╔══██╗██╔══██║██╔══██╗          #
+#         ╚███╔███╔╝██║  ██║   ██║   ██████╔╝██║  ██║██║  ██║          #
+#          ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝          #
+#                                                                      #
+#       ███████╗████████╗██╗   ██╗██╗     ██╗███╗   ██╗ ██████╗        #
+#       ██╔════╝╚══██╔══╝╚██╗ ██╔╝██║     ██║████╗  ██║██╔════╝        #
+#       ███████╗   ██║    ╚████╔╝ ██║     ██║██╔██╗ ██║██║  ███╗       #
+#       ╚════██║   ██║     ╚██╔╝  ██║     ██║██║╚██╗██║██║   ██║       #
+#       ███████║   ██║      ██║   ███████╗██║██║ ╚████║╚██████╔╝       #
+#       ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝        #
+#   ___           __ _        _            ___ _                  __   #
+#  / __|___ _ _  / _(_)__ _  | |__ _  _   | _ \ |  _  _ _ _ __ __/  \  #
+# | (__/ _ \ ' \|  _| / _` | | '_ \ || |  |   / |_| || | ' \\ \ / () | #
+#  \___\___/_||_|_| |_\__, | |_.__/\_, |  |_|_\____\_, |_||_/_\_\\__/  #
+#                      |___/        |__/           |__/                #
+*/
+
+* {
+  font-size: 12px;
+}
+
+window#waybar {
+  background-color: rgba(34, 36, 38, 0.75);
+  color: #ddd;
+  transition-property: background-color;
+  transition-duration: .5s;
+  border-radius: 1.2em;
+}
+
+window#waybar.hidden {
+  opacity: 0.2;
+}
+
+window#waybar.empty {
+  background-color: transparent;
+}
+
+button {
+  box-shadow: inset 0 -3px transparent;
+  border: none;
+  border-radius: 0;
+}
+
+button:hover {
+  background: inherit;
+  box-shadow: inset 0 -3px #fff;
+}
+
+#workspaces button {
+  background-color: transparent;
+  color: #fff;
+  font-weight: bold;
+  padding: 0 5px;
+  border-radius: 1.2em;
+}
+
+#workspaces button.focused {
+  background-color: #64727D;
+  box-shadow: inset 0 -3px #ffffff;
+}
+
+#workspaces button.urgent {
+  background-color: #eb4d4b;
+}
+
+#mode {
+  background-color: #64727D;
+  border-bottom: 3px solid #ffffff;
+}
+
+#wireplumber,
+#bluetooth,
+#network,
+#battery,
+#clock,
+#custom-appmenu,
+#custom-updates,
+#custom-cliphist,
+#custom-exit,
+#custom-hyprpanic,
+.group-child * {
+  min-width: 1.2em;
+  background-color: rgba(80, 80, 80, 0.5);
+  color: #ddd;
+  padding: 0 0.5em;
+  border-radius: 1.2em;
+}
+
+.group-child:not(:first-child) * {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  padding-left: 0.2em;
+}
+
+.group-child:not(:last-child) * {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+  padding-right: 0.2em;
+}
+
+.group-child:last-child * {
+  margin-right: 4px;
+}
+
+#window,
+#workspaces {
+  margin: 0 4px;
+}
+
+/* If workspaces is the leftmost module, omit left margin */
+.modules-left>widget:first-child>#workspaces {
+  margin-left: 0;
+}
+
+/* If workspaces is the rightmost module, omit right margin */
+.modules-right>w.panickedidget:last-child>#workspaces {
+  margin-right: 0;
+}
+
+label:focus {
+  background-color: #000000;
+}
+
+#battery,
+#custom-hyprpanic {
+  font-weight: bold;
+}
+
+@keyframes breathe {
+  to {
+    color: #88ccdd;
+  }
+}
+
+#battery.charging {
+  color: #dd88cc;
+  animation-name: breathe;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-duration: 2.7s;
+}
+
+
+#battery.plugged {
+  animation-name: breathe;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-duration: 3.6s;
+}
+
+@keyframes blink {
+  to {
+    background-color: #d05850;
+    color: #ddd;
+  }
+}
+
+#battery.critical:not(.charging),
+#custom-hyprpanic.panicked {
+  color: #d05850;
+  animation-name: blink;
+  animation-duration: 0.6s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+#cpu {
+  color: #44bbcc;
+}
+
+#memory {
+  color: #7094c6;
+}
+
+#disk {
+  color: #9d6dc1;
+}
+
+#temperature {
+  color: #cc44bb;
+}
+
+#temperature.critical {
+  color: #d05850;
+}
+
+#network.disconnected {
+  color: #d05850;
+}
+
+#pulseaudio.muted {
+  color: #555a5f;
+}
+
+#wireplumber.muted {
+  color: #555a5f;
+}
+
+#tray {
+  background-color: #2980b9;
+}
+
+#tray>.passive {
+  -gtk-icon-effect: dim;
+}
+
+#tray>.needs-attention {
+  -gtk-icon-effect: highlight;
+  background-color: #eb4d4b;
+}
+
+#idle_inhibitor {
+  background-color: #2d3436;
+}
+
+#idle_inhibitor.activated {
+  background-color: #ecf0f1;
+  color: #2d3436;
+}
+
+#mpd {
+  background-color: #66cc99;
+  color: #2a5c45;
+}
+
+#mpd.disconnected {
+  background-color: #f53c3c;
+}
+
+#mpd.stopped {
+  background-color: #90b1b1;
+}
+
+#mpd.paused {
+  background-color: #51a37a;
+}
+
+#custom-appmenu,
+#custom-cliphist,
+#custom-exit {
+  padding-left: 0.8em;
+  padding-right: 0.4em;
+}

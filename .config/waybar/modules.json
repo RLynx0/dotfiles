@@ -1,0 +1,170 @@
+{
+  "hyprland/window": {
+    "rewrite": {},
+    "separate-outputs": true
+  },
+  "hyprland/workspaces": {
+    "on-click": "activate",
+    "active-only": false,
+    "all-outputs": true,
+    "format": "{}",
+    "format-icons": {
+      "urgent": "",
+      "active": "",
+      "default": ""
+    }
+  },
+  "group/audio": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 300,
+      "children-class": "group-child",
+      "transition-left-to-right": false
+    },
+    "modules": [
+      "wireplumber",
+      "pulseaudio"
+    ]
+  },
+  "group/hardware": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 300,
+      "children-class": "group-child",
+      "transition-left-to-right": false
+    },
+    "modules": [
+      "battery",
+      "cpu",
+      "memory",
+      "disk",
+      "temperature"
+    ]
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}% {format_source}",
+    "format-muted": "󰝟 {format_source}",
+    "format-source": " {volume}%",
+    "format-source-muted": " ",
+    "format-icons": {
+      "bluetooth": " ",
+      "headphone": "󰋋 ",
+      "headset": "󰋎 ",
+      "hands-free": "󰹇 ",
+      "phone": " ",
+      "portable": " ",
+      "car": " ",
+      "default": [
+        "󰕿",
+        "󰖀 ",
+        "󰕾 "
+      ]
+    },
+    "on-click": "~/.config/scripts/sonorum.sh mute",
+    "on-click-right": "pavucontrol",
+    "on-click-middle": "helvum"
+  },
+  "wireplumber": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰝟",
+    "format-icons": [
+      "󰕿",
+      "󰖀 ",
+      "󰕾 "
+    ],
+    "max-volume": 120,
+    "scroll-step": 1,
+    "on-click": "~/.config/scripts/sonorum.sh mute",
+    "on-click-right": "pavucontrol",
+    "on-click-middle": "helvum"
+  },
+  "bluetooth": {
+    "format": "  {status}",
+    "format-disabled": "",
+    "format-off": "",
+    "interval": 30,
+    "on-click": "blueman-manager",
+    "format-no-controller": "",
+    "tooltip-format": "Bluetooth devices"
+  },
+  "network": {
+    "format": "{ifname}",
+    "format-wifi": "    {signalStrength}%",
+    "format-ethernet": "󰈀  {ifname}",
+    "format-disconnected": "Disconnected",
+    "tooltip-format": "{ifname} via {gwaddri}",
+    "tooltip-format-wifi": "   {ifname} @ {essid}\nIP: {ipaddr}\nStrength: {signalStrength}%\nFreq: {frequency}MHz\nUp: {bandwidthUpBits} Down: {bandwidthDownBits}",
+    "tooltip-format-ethernet": "󰈀  {ifname}\nIP: {ipaddr}\n up: {bandwidthUpBits} down: {bandwidthDownBits}",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "nm-connection-editor",
+    "on-click-right": "kitty --title 'nmtui <floating>' sh -c 'sleep 0.2 && nmtui'",
+    "max-length": 80
+  },
+  "cpu": {
+    "format": "  {usage}% ",
+    "on-click": "kitty --title 'htop <floating>' htop"
+  },
+  "memory": {
+    "format": "󰓫 {}% ",
+    "on-click": "kitty --title 'htop <floating>' htop"
+  },
+  "disk": {
+    "interval": 30,
+    "format": "  {percentage_used}% ",
+    "path": "/",
+    "on-click": "kitty --title 'htop <floating>' htop"
+  },
+  "temperature": {
+    "format": " {}°C",
+    "on-click": "kitty --title 'htop <floating>' htop"
+  },
+  "battery": {
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon} {capacity}%",
+    "format-alt": "{icon} {time}",
+    "format-icons": {
+      "charging": " ",
+      "plugged": " ",
+      "default": [
+        "  ",
+        "  ",
+        "  ",
+        "  ",
+        "  "
+      ]
+    }
+  },
+  "clock": {
+    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+    "format-alt": "{:%Y-%m-%d - %H:%M}"
+  },
+  "custom/appmenu": {
+    "format": " ",
+    "on-click": "wofi --insensitive --allow-images --show drun",
+    "tooltip": false
+  },
+  "custom/hyprpanic": {
+    "format": "{}",
+    "return-type": "json",
+    "escape": true,
+    "tooltip": true,
+    "signal": 1,
+    "exec": "~/.config/hypr/panic/panic.sh -i",
+    "on-click": "~/.config/hypr/panic/panic.sh -s 1"
+  },
+  "custom/cliphist": {
+    "format": " ",
+    "on-click": "~/.config/scripts/clipboard.sh",
+    "on-click-right": "~/.config/scripts/clipboard.sh delete",
+    "tooltip": false
+  },
+  "custom/exit": {
+    "format": " ",
+    "on-click": "wlogout",
+    "on-click-right": "swaylock",
+    "tooltip": false
+  }
+}

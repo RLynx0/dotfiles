@@ -45,8 +45,7 @@ set terminal_pid (awk '{print $4}' /proc/(echo %self)/stat)
 set terminal (basename "/"(ps -fp $terminal_pid | awk 'END {print $8}'))
 set notification "$HOME/Personal/Music/sounds/martlet-bell.wav"
 
-
-# Aliases >:3
+# ALIASES >:3
 alias .modified=".git status --porcelain | awk -F '^ *M +' '\$2{print \$2}'"
 alias hx='helix'
 alias netflix='qtwebflix'
@@ -54,11 +53,11 @@ alias bg-sysup="yes '' | sysup -ca $notification -i $HOME/Personal/Pictures/rend
 alias rank-cmd='history | awk \'/^\w/{print $1}\' | sort | uniq -c | sort -rn'
 alias whats-my-motherfucking-name="whoami"
 alias !! 'set x (history | awk \'!/!!/\' | head -1); echo "> $x"; eval "$x"'
-# Overrides
+# overrides
 alias rereflect="rereflect -a $notification -i $HOME/Personal/Pictures/renders/SuperSaiyanMartletSmol.gif"
-# Kittens
+# kittens
 alias icat='kitty +kitten icat'
-# Open URL
+# open url
 alias corel='librewolf https://app.corelvector.com/'
 alias duolingo='librewolf https://www.duolingo.com'
 alias instagram='librewolf https://www.instagram.com'
@@ -66,18 +65,19 @@ alias twitch='librewolf https://www.twitch.tv'
 alias whatsapp='librewolf https://web.whatsapp.com'
 alias youtube='librewolf https://www.youtube.com'
 
+# START
 set -x fish_greeting
 if test (tty) = /dev/tty1
     Hyprland
 else
-    # Strating Starship
+    # STRATING STARSHIP
     function starship_transient_prompt_func
         starship module character
     end
     starship init fish | source
     enable_transience
 
-    # Greeting
+    # GREETING
     if command -v souls.sh >/dev/null
         echo
         printf "  %s\n" (souls.sh m)

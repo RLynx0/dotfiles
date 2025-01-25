@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Twitch
+Comment=Open Twitch in Firefox
+Exec=/usr/bin/firefox https://www.twitch.tv/
+Icon=twitch_icon
+Terminal=false
+Type=Application
+Categories=Network;AudioVideo;Player;

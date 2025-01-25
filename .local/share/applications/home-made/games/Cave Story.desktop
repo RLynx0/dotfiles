@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Cave Story
+Comment=Launch Cave Story with Wine
+Exec=gamescope -F nearest -w 640 -h 480 -W 1920 -H 1080 -- wine /home/lynx/bin/exe/CaveStory/Doukutsu.exe
+Icon=cavestory_icon
+Terminal=false
+Type=Application
+Categories=Game;

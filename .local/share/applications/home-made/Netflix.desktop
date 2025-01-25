@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Netflix
+Comment=Open Netflix in Firefox
+Exec=/usr/bin/firefox https://www.netflix.com/
+Icon=netflix_icon
+Terminal=false
+Type=Application
+Categories=Network;AudioVideo;Player;

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Telegram
+Comment=Open Telegram in Browser
+Exec=/home/lynx/.config/scripts/librewolf-workspace.sh https://web.telegram.org/
+Icon=telegram_icon
+Terminal=false
+Type=Application
+Categories=Network;InstantMessaging;

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=TS! Underswap
+Comment=Launch TS!Underwap AppImage
+Exec=/home/lynx/bin/appimage/ts-underswap-demo-2.0.4-linux.appimage
+Icon=ts_underswap_icon
+Terminal=false
+Type=Application
+Categories=Game;

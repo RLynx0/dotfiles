@@ -1,0 +1,808 @@
+palette = 'dark_lynx'
+
+format = """
+[](da0)[ ](bg:da0)\
+$os\
+$shell\
+$shlvl\
+$username\
+$sudo\
+$hostname\
+$localip\
+$singularity\
+$kubernetes\
+[](bg:da1 fg:da0)\
+
+$directory\
+[](fg:da1 bg:da2)\
+
+$vcsh\
+$fossil_branch\
+$git_branch\
+$git_commit\
+$git_state\
+$git_metrics\
+$git_status\
+$hg_branch\
+$pijul_channel\
+[](fg:da2 bg:lb2)\
+
+$c\
+$cmake\
+$cobol\
+$daml\
+$dart\
+$deno\
+$dotnet\
+$elixir\
+$elm\
+$erlang\
+$fennel\
+$golang\
+$guix_shell\
+$haskell\
+$haxe\
+$helm\
+$java\
+$julia\
+$kotlin\
+$gradle\
+$lua\
+$nim\
+$nodejs\
+$ocaml\
+$opa\
+$perl\
+$php\
+$pulumi\
+$purescript\
+$python\
+$raku\
+$rlang\
+$red\
+$ruby\
+$rust\
+$scala\
+$solidity\
+$swift\
+$terraform\
+$vlang\
+$vagrant\
+$zig\
+$buf\
+$nix_shell\
+$conda\
+$meson\
+$spack\
+$memory_usage\
+$aws\
+$gcloud\
+$openstack\
+$azure\
+[](fg:lb2 bg:lb1)\
+
+$docker_context\
+$package\
+[](fg:lb1 bg:lb0)\
+
+$crystal\
+$jobs\
+$time\
+$container\
+[ ](bg:lb0)[](lb0)
+[╭──╴╴╴](la0) $battery
+$env_var\
+$cmd_duration\
+[╰╴](la0)\
+$status\
+$character
+"""
+
+
+command_timeout = 5000
+add_newline = true
+
+
+# ╔══════════╗
+# ║ OS/Shell ║
+# ╚══════════╝
+
+[os]
+disabled = false
+format = '[$symbol]($style)'
+style = 'bg:da0 fg:blue'
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+Amazon = " "
+Android = " "
+Arch = "󰣇 "
+Artix = " "
+CentOS = " "
+Debian = " "
+DragonFly = "󰮐 "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = " "
+Gentoo = " "
+HardenedBSD = " "
+Illumos = " "
+# Kali = " "
+# -> not supported
+Linux = " "
+Mabox = "󰏖 "
+Macos = " "
+Manjaro = " "
+Mariner = "󰻈 "
+MidnightBSD = "󰽥 "
+Mint = "󰣭 "
+NetBSD = " "
+NixOS = " "
+OpenBSD = "󰈺 "
+OpenCloudOS = " "
+openEuler = "󰏒 "
+openSUSE = " "
+OracleLinux = "󰂹 "
+Pop = " "
+Raspbian = " "
+Redhat = "󱄛 "
+RedHatEnterprise = "󱄛 "
+Redox = " "
+Solus = " "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Windows = " "
+
+[shell]
+disabled = false
+format = '[$indicator ]($style)'
+style = 'bold bg:da0 fg:aqua'
+bash_indicator = 'bsh'
+fish_indicator = 'fsh'
+zsh_indicator = 'zsh'
+powershell_indicator = 'psh'
+ion_indicator = 'ion'
+elvish_indicator = 'esh'
+tcsh_indicator = 'tsh'
+xonsh_indicator = 'xsh'
+cmd_indicator = 'cmd'
+nu_indicator = 'nu'
+unknown_indicator = ''
+
+
+
+# ╔══════╗
+# ║ User ║
+# ╚══════╝
+
+[username]
+disabled = false
+format = '[$user ]($style)'
+style_user = 'bg:da0'
+style_root = 'bg:da0 fg:blue'
+show_always = true
+
+[sudo]
+disabled = false
+format = '[as $symbol ]($style)'
+style = 'bold bg:da0 fg:blue'
+symbol = '󱑷 '
+allow_windows = false
+
+
+[hostname]
+disabled = false
+format = '[$ssh_symbol$hostname ]($style)'
+style = 'bold bg:da0 fg:aqua'
+ssh_symbol = ' '
+ssh_only = true
+trim_at = '.'
+
+[localip]
+disabled = true
+format = '[$localipv4 ]($style)'
+style = 'bg:da0 fg:yellow'
+ssh_only = true
+
+[shlvl]
+disabled = false
+threshold = 2
+format = '[$symbol$shlvl ]($style)'
+style = 'bold bg:da0 fg:purple'
+symbol = '󰹺'
+repeat = false
+repeat_offset = 0
+
+[singularity]
+disabled = false
+format = '[$symbol\[$env\] ]($style)'
+style = 'bg:da0 fg:blue'
+symbol = ''
+
+[kubernetes]
+disabled = true
+format = '[$symbol$context( \($namespace\)) ]($style)]'
+style = 'bold bg:da0 fg:aqua'
+symbol = '󱃾 '
+context_aliases = {}
+user_aliases = {}
+detect_extensions = []
+detect_files = []
+detect_folders = []
+
+
+
+# ╔═══════════╗
+# ║ Directory ║
+# ╚═══════════╝
+
+[directory]
+disabled = false
+format = '[ $path ]($style)'
+style = 'bg:da1'
+home_symbol = '~'
+read_only_style = 'bg:da1 fg:red'
+read_only = ''
+truncation_length = 3
+truncate_to_repo = true
+truncation_symbol = '…/'
+repo_root_format = """[ \
+  [$before_root_path]($before_repo_root_style)\
+  [$repo_root]($repo_root_style)\
+  $path[$read_only]($read_only_style) ]\
+($style)\
+"""
+before_repo_root_style = 'bg:da1'
+repo_root_style = 'bg:da1'
+use_os_path_sep = true
+
+[directory.substitutions]
+"home" = '󰋜 '
+".config" = ' '
+"Documents" = '󰈙 '
+"Downloads" = ' '
+"Important Documents" = '󰈙 '
+"Music" = ' '
+"Pictures" = ' '
+
+
+
+# ╔═════════════════╗
+# ║ Version Control ║
+# ╚═════════════════╝
+
+[vcsh]
+disabled = false
+format = '[ vcsh $symbol$repo ]($style)'
+style = 'bg:da2'
+symbol = ''
+
+[fossil_branch]
+disabled = false
+format = '[ $symbol$branch ]($style)'
+style = 'bg:da2'
+symbol = ''
+# truncation_length = 2^63 - 1
+truncation_symbol = '…'
+
+[git_branch]
+disabled = false
+format = '[ $symbol$branch ]($style)'
+style = 'bg:da2'
+symbol = ' '
+
+[git_commit]
+disabled = false
+format = '[\([$hash$tag]($style)\) ](bg:da2)'
+style = 'bold bg:da2 fg:green'
+tag_symbol = ' '
+only_detached = true
+tag_disabled = true
+tag_max_candidates = 0
+
+[git_state]
+disabled = false
+format = '[\([$state($progress_current/$progress_total)\)]($style) ](bg:da2)'
+style = 'bold bg:da2 fg:yellow'
+rebase = 'REBASING'
+merge = 'MERGING'
+revert = 'REVERTING'
+cherry_pick = 'CHERRY-PICKING'
+bisect = 'BISECTING'
+am = 'AM'
+am_or_rebase = 'AM/REBASE'
+
+[git_metrics]
+disabled = false
+format = '[([+$added]($added_style))([-$deleted]($deleted_style) )](bg:da2)'
+added_style = 'bold bg:da2 fg:green'
+deleted_style = 'bold bg:da2 fg:red'
+only_nonzero_diffs = true
+ignore_submodules = false
+
+[git_status]
+disabled = false
+format = '[$all_status$ahead_behind ]($style)'
+style = 'bold bg:da2 fg:orange'
+conflicted = '='
+ahead = ' '
+behind = ' '
+diverged = ''
+up_to_date = ''
+untracked = '?'
+stashed = '\$'
+modified = '!'
+staged = '+'
+renamed = '»'
+deleted = '✘'
+typechanged = ''
+ignore_submodules = false
+
+[hg_branch]
+disabled = false
+format = '[ $symbol$branch(:$topic) ]($tyle)'
+style = 'bg:da2'
+symbol = ''
+# truncation_length = 2^63 - 1
+truncation_symbol = '…'
+
+[pijul_channel]
+disabled = false
+format = '[ $symbol$channel ]($tyle)'
+style = 'bg:da2'
+symbol = ''
+# truncation_length = 2^63 - 1
+truncation_symbol = '…'
+
+
+
+# ╔══════╗
+# ║ Lang ║
+# ╚══════╝
+
+[c]
+disabled = false
+format = '[ $symbol ($version(-$name)) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[cmake]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[cobol]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[daml]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = '󰠄 '
+
+[dart]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[deno]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[dotnet]
+disabled = false
+format = '[ $symbol \($version\)(󰓾 $tfm) ]($style)'
+style = 'bg:lb2'
+symbol = '󰪮 '
+heuristic = true
+
+[elixir]
+disabled = false
+format = '[ $symbol ($version \(OPT $opt_version\)) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[elm]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[erlang]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[fennel]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[golang]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[gradle]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[guix_shell]
+disabled = false
+format = '[ $symbol ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[haskell]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[haxe]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[helm]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = '󰶓 '
+
+[java]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[julia]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[kotlin]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[lua]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[nim]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[nodejs]
+disabled = false
+format = '[ $symbol\($version\) ](bg:lb2)'
+symbol = ' '
+
+[ocaml]
+disabled = false
+format = '[ $symbol \($version\)(\($switch_indicator$switch_name\)) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[opa]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = '󰵰 '
+
+[perl]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[php]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = '󰌟 '
+
+[pulumi]
+disabled = false
+format = '[ $symbol ($username@)$stack ]($style)'
+style = 'bg:lb2'
+symbol = '󰆦 '
+
+[purescript]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[python]
+disabled = false
+format = '[ $symbol $pyenv_prefix($version )(\($virualenv\)) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[raku]
+disabled = false
+format = '[ $symbol ($version-$vm_version) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[rlang]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = '󰟔 '
+
+[red]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = '󱥒 '
+
+[ruby]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[rust]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ''
+
+[scala]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ''
+
+[solidity]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ''
+
+[swift]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[terraform]
+disabled = false
+format = '[ $symbol $workspace ]($style)'
+style = 'bg:lb2'
+symbol = '󱁢 '
+
+[vlang]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[vagrant]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[zig]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[buf]
+disabled = false
+format = '[ $symbol \($version\) ]($style)'
+style = 'bg:lb2'
+symbol = ' '
+
+[nix_shell]
+disabled = true
+
+[conda]
+disabled = true
+
+[meson]
+disabled = true
+
+[spack]
+disabled = true
+
+[memory_usage]
+disabled = true
+
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[openstack]
+disabled = true
+
+[azure]
+disabled = true
+
+[docker_context]
+disabled = false
+format = '[ $symbol $context ]($style) $path '
+style = 'bg:lb1'
+symbol = ' '
+
+[package]
+disabled = false
+format = '[ $symbol$version]($style)'
+style = 'bg:lb1'
+symbol = '󰏖 '
+version_format = 'v${raw}'
+display_private = false
+
+
+
+# ╔════════╗
+# ║ System ║
+# ╚════════╝
+
+[crystal]
+disabled = true
+
+# [custom]
+
+[jobs]
+disabled = false
+symbol = '✦'
+format = '[ $symbol$number]($style)'
+style = 'bold bg:lb0'
+
+[time]
+disabled = false
+time_format = '%R' # Hour:Minute Format
+format = '[ $time]($style)'
+style = 'bg:lb0'
+
+[container]
+disabled = true
+
+
+
+# ╔═════════╗
+# ║ Battery ║
+# ╚═════════╝
+
+[battery]
+disabled = false
+format = '[$symbol $percentage](bold $style)'
+charging_symbol = ' '
+full_symbol = ' '
+unknown_symbol = '󰂄'
+
+[[battery.display]]
+threshold = 20
+discharging_symbol = ' '
+style = 'red'
+
+[[battery.display]]
+threshold = 40
+discharging_symbol = ' '
+style = 'orange'
+
+[[battery.display]]
+threshold = 60
+discharging_symbol = ' '
+style = 'yellow'
+
+[[battery.display]]
+threshold = 80
+discharging_symbol = ' '
+style = 'green'
+
+[[battery.display]]
+threshold = 100
+discharging_symbol = ' '
+style = 'aqua'
+
+
+
+# ╔══════════╗
+# ║ Env Vars ║
+# ╚══════════╝
+
+[env_var]
+disabled = false
+
+# [env_var.USER]
+# default = 'unknown user'
+# format = "[│](la0) with [user](bold) = [$env_value]($style)\n"
+# style = 'bold aqua'
+
+
+
+# ╔══════════╗
+# ║ Feedback ║
+# ╚══════════╝
+
+[cmd_duration]
+disabled = false
+min_time = 2_000
+format = "[│](la0) took [$duration]($style)\n"
+style = 'bold orange'
+
+[status]
+disabled = false
+format = '[$symbol$status]($style)'
+symbol = ''
+success_symbol = ''
+not_executable_symbol = ''
+not_found_symbol = ''
+sigint_symbol = ''
+signal_symbol = ''
+style = 'bold red'
+recognize_signal_code = true
+# map_symbol = false
+pipestatus = false
+pipestatus_separator = '|'
+pipestatus_format = '\[$pipestatus\] => [$symbol$common_meaning$signal_name$maybe_int]($style)'
+
+[character]
+disabled = false
+format = '$symbol '
+success_symbol = '[❯](bold green)'
+error_symbol = '[❯](bold red)'
+vimcmd_symbol = '[❮](bold green)'
+vimcmd_replace_one_symbol = '[❮](bold purple)'
+vimcmd_replace_symbol = '[❮](bold purple)'
+vimcmd_visual_symbol = '[❮](bold yellow)'
+
+
+
+# ╔══════════╗
+# ║ Palettes ║
+# ╚══════════╝
+
+[palettes.dark_lynx]
+da0 = '#3B4252'
+da1 = '#434C5E'
+da2 = '#4C566A'
+
+la0 = '#888888'
+lb0 = '#b070e0'
+lb1 = '#9878e8'
+lb2 = '#8080f0'
+
+red = '#d05850'
+orange = '#d08050'
+yellow = '#d0b080'
+green = '#60d0a0'
+aqua = '#60c0c0'
+blue = '#50a0d0'
+purple = '#c080d8'
+
+orange_dark = '#a02000'
+green_dark = '#306040'
+blue_dark = '#004060'

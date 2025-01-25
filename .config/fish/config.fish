@@ -63,7 +63,11 @@ if test (tty) = /dev/tty1
     Hyprland
 else
     # Strating Starship
-    eval (starship init fish | string collect)
+    function starship_transient_prompt_func
+        starship module character
+    end
+    starship init fish | source
+    enable_transience
 
     # Greeting
     if command -v souls.sh >/dev/null

@@ -152,8 +152,8 @@
     "escape": true,
     "tooltip": true,
     "signal": 1,
-    "exec": "~/.config/hypr/panic/panic.sh -i",
-    "on-click": "~/.config/hypr/panic/panic.sh -s 1"
+    "exec": "~/.config/hypr/scripts/panic/panic.sh -i",
+    "on-click": "~/.config/hypr/scripts/panic/panic.sh -s 1"
   },
   "custom/cliphist": {
     "format": " ",

@@ -38,7 +38,6 @@ set notification "$HOME/Personal/Music/sounds/martlet-bell.wav"
 
 
 # Aliases >:3
-alias .git="git --work-tree $HOME --git-dir $HOME/.dotfiles"
 alias .modified=".git status --porcelain | awk -F '^ *M +' '\$2{print \$2}'"
 alias hx='helix'
 alias netflix='qtwebflix'

@@ -1,6 +1,32 @@
-# Setting PATH
-set -a PAs "$HOME/.config/cabal/bin"
-set -a PAs "$HOME/.config/cargo/bin"
+# XDG BASE DIRECTORIES
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+
+# HOME CLEANING
+export CALCHISTFILE="$XDG_CACHE_HOME/calc_history"
+export CARGO_HOME="$XDG_CONFIG_HOME/cargo"
+export GHCUP_USE_XDG_DIRS="true"
+export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
+export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc-2.0"
+export LESSHISTFILE="$XDG_CONFIG_HOME/less/history"
+export LESSKEY="$XDG_CONFIG_HOME/less/keys"
+export NODE_REPL_HISTORY="$XDG_DATA_HOME/node_repl_history"
+export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
+export NPM_CONFIG_PREFIX="$XDG_CONFIG_HOME/npm"
+export NPM_CONFIG_USERCONFIG="$NPM_CONFIG_PREFIX/npmrc"
+export PARALLEL_HOME="$XDG_CONFIG_HOME/parallel"
+export PYTHONPYCACHEPREFIX="$XDG_CACHE_HOME/python"
+export PYTHONUSERBASE="$XDG_DATA_HOME/python"
+export PYTHON_HISTORY="$XDG_STATE_HOME/python/history"
+export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+export STACK_XDG=1
+export WGETRC="$XDG_CONFIG_HOME/wgetrc"
+
+# SETTING PATH
+set -a PAs "$XDG_CONFIG_HOME/cabal/bin"
+set -a PAs "$XDG_CONFIG_HOME/cargo/bin"
 set -a PAs "$HOME/bin"
 
 for pa in $PAs
@@ -11,24 +37,7 @@ end
 
 set -e PAs
 
-
-# Home Cleaning
-export CALCHISTFILE="$HOME/.cache/calc_history"
-export CARGO_HOME="$HOME/.config/cargo"
-export GHCUP_USE_XDG_DIRS=true
-export HISTFILE=".local/state/bash/history"
-# export _JAVA_OPTIONS="-Djava.util.prefs.userRoot $HOME/.config/java"
-export NODE_REPL_HISTORY="$HOME/.local/share/node_repl_history"
-export NPM_CONFIG_USERCONFIG="$HOME/.config/npm/npmrc"
-export PARALLEL_HOME="$HOME/.config/parallel"
-export PYTHON_HISTORY="$HOME/.local/state/python/history"
-export PYTHONPYCACHEPREFIX="$HOME/.cache/python"
-export PYTHONUSERBASE="$HOME/.local/share/python"
-export RUSTUP_HOME="$HOME/.local/share/rustup"
-export STACK_XDG=1
-export WGETRC="$HOME/.config/wgetrc"
-
-# Sys Vars
+# SYS VARS
 set EDITOR helix
 
 # Util Variables

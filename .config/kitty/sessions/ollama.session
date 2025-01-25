@@ -1,0 +1,5 @@
+enabled_layouts horizontal
+layout horizontal
+launch ollama serve
+launch ollama run dolphin-mixtral:latest
+focus

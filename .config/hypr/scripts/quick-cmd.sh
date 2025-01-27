@@ -71,6 +71,7 @@ function dock_horizontal {
 
 function setup {
   unchanged && sh "$SET_FILE" && return
+  hyprctl dispatch setfloating
   hyprctl dispatch resizeactive "exact $WIDTH 100%"
   hyprctl dispatch resizeactive -- "0 -$(probe_reserved)"
   hyprctl dispatch centerwindow 1

@@ -37,6 +37,11 @@ end
 
 set -e PAs
 
+# INPUT METHOD
+set -x QT_IM_MODULE fcitx5
+set -x SDL_IM_MODULE fcitx5
+set -x XMODIFIERS "@im=fcitx5"
+
 # SYS VARS
 set EDITOR helix
 

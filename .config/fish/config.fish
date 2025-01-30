@@ -70,11 +70,14 @@ alias twitch='librewolf https://www.twitch.tv'
 alias whatsapp='librewolf https://web.whatsapp.com'
 alias youtube='librewolf https://www.youtube.com'
 
+# ZOXIDE
+zoxide init --cmd cd fish | source
+
 # START
 set -x fish_greeting
 if test (tty) = /dev/tty1
-    Hyprland
-else
+    Hyprland # Start automatically in default terminal
+else if tty | grep -vE "^/dev/tty[0-9]" >/dev/null
     # STRATING STARSHIP
     function starship_transient_prompt_func
         starship module character

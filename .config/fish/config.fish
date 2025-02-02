@@ -51,12 +51,12 @@ set terminal (basename "/"(ps -fp $terminal_pid | awk 'END {print $8}'))
 set notification "$HOME/Personal/Music/sounds/martlet-bell.wav"
 
 # ALIASES >:3
-alias .modified=".git status --porcelain | awk -F '^ *M +' '\$2{print \$2}'"
 alias hx='helix'
 alias netflix='qtwebflix'
 alias bg-sysup="yes '' | sysup -ca $notification -i $HOME/Personal/Pictures/renders/SuperSaiyanMartletSmol.gif | tee"
 alias rank-cmd='history | awk \'/^\w/{print $1}\' | sort | uniq -c | sort -rn'
 alias whats-my-motherfucking-name="whoami"
+alias rep 'set x (history | fzf); echo "> $x"; eval "$x"'
 alias !! 'set x (history | awk \'!/!!/\' | head -1); echo "> $x"; eval "$x"'
 # overrides
 alias rereflect="rereflect -a $notification -i $HOME/Personal/Pictures/renders/SuperSaiyanMartletSmol.gif"

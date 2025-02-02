@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Reddit
 Comment=Open Reddit in Browser
-Exec=/home/lynx/.config/scripts/librewolf-workspace.sh https://www.reddit.com/
+Exec=sh -c '$HOME/.config/scripts/librewolf-workspace.sh https://www.reddit.com/'
 Icon=reddit_icon
 Terminal=false
 Type=Application

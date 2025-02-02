@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Amazon
 Comment=Open Amazon in Browser
-Exec=/home/lynx/.config/scripts/librewolf-workspace.sh https://www.amazon.de
+Exec=sh -c '$HOME/.config/scripts/librewolf-workspace.sh https://www.amazon.de'
 Icon=amazon_icon
 Terminal=false
 Type=Application

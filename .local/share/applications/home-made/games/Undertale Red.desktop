@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Undertale Red
 Comment=Launch with Wine
-Exec=wine '/home/lynx/bin/exe/UNDERTALE - RED/Undertale - Red.exe'
+Exec=sh -c 'wine "$HOME/bin/exe/UNDERTALE - RED/Undertale - Red.exe"'
 Icon=undertale_red_icon
 Terminal=false
 Type=Application

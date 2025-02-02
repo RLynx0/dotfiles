@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Disney Plus
 Comment=Open Disney+ in Browser
-Exec=/home/lynx/.config/scripts/librewolf-workspace.sh https://www.disneyplus.com
+Exec=sh -c '$HOME/.config/scripts/librewolf-workspace.sh https://www.disneyplus.com'
 Icon=disneyplus_icon
 Terminal=false
 Type=Application

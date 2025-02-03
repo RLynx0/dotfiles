@@ -21,8 +21,11 @@ export PYTHONPYCACHEPREFIX="$XDG_CACHE_HOME/python"
 export PYTHONUSERBASE="$XDG_DATA_HOME/python"
 export PYTHON_HISTORY="$XDG_STATE_HOME/python/history"
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+export SCREENRC="$XDG_CONFIG_HOME/screen/screenrc"
+export SCREENDIR="$XDG_RUNTIME_DIR/screen"
 export STACK_XDG=1
 export WGETRC="$XDG_CONFIG_HOME/wgetrc"
+export WINEPREFIX="$XDG_DATA_HOME/wine"
 
 # SETTING PATH
 set -a PAs "$XDG_CONFIG_HOME/cabal/bin"

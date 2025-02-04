@@ -59,8 +59,6 @@ alias netflix='qtwebflix'
 alias bg-sysup="yes '' | sysup -ca $notification -i $HOME/Personal/Pictures/renders/SuperSaiyanMartletSmol.gif | tee"
 alias rank-cmd='history | awk \'/^\w/{print $1}\' | sort | uniq -c | sort -rn'
 alias whats-my-motherfucking-name="whoami"
-alias rep 'set x (history | fzf); test ! -z "$x" && echo "> $x" && eval "$x"'
-alias !! 'set x (history | awk \'!/!!/\' | head -1); echo "> $x"; eval "$x"'
 # overrides
 alias rereflect="rereflect -a $notification -i $HOME/Personal/Pictures/renders/SuperSaiyanMartletSmol.gif"
 # kittens
@@ -72,6 +70,18 @@ alias instagram='librewolf https://www.instagram.com'
 alias twitch='librewolf https://www.twitch.tv'
 alias whatsapp='librewolf https://web.whatsapp.com'
 alias youtube='librewolf https://www.youtube.com'
+
+# FUNCTIONS
+function rep
+    set command "$(history --null | fzf --read0)"
+    test -z "$command" && return 130
+    echo "$command" | awk -v c=">" '
+    { print c, $0 }
+    { c = " " }
+    l > m { m = l }
+    END { printf "\n" }'
+    eval "$command"
+end
 
 # ZOXIDE
 zoxide init --cmd cd fish | source

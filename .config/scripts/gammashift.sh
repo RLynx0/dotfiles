@@ -1,28 +1,32 @@
 #!/usr/bin/bash
 
-STATE_HOME="${XDG_DATA_HOME:-"$HOME/.local/share"}/gammashift"
+STATE_HOME="${XDG_STATE_HOME:-"$HOME/.local/share"}/gammashift"
 PRECISION="3"
 property="$1"
 input_val="$2"
 time="${3:-"2"}"
-timestep="${4:-"0.025"}"
+timestep="${4:-"0.02"}"
 
-[ "$input_val" = "undo" ] && target="$(cat "$STATE_HOME/$property.prev")"
+[ "$input_val" = "undo" ] && B="$(cat "$STATE_HOME/$property.prev")"
 [[ "$input_val" =~ ^([+*/-]?)\s*([0-9]+(\.[0-9]+)?)$ ]] \
-&& op="${BASH_REMATCH[1]}" && target="${BASH_REMATCH[2]}"
-[ -z "$target" ] && exit 1
+&& op="${BASH_REMATCH[1]}" && B="${BASH_REMATCH[2]}"
+[ -z "$B" ] && exit 1
 
-val="$(busctl --user -- get-property rs.wl-gammarelay / rs.wl.gammarelay "$property")"
-char="${val% *}"; val="${val#* }"
+A="$(busctl --user -- get-property rs.wl-gammarelay / rs.wl.gammarelay "$property")"
+char="${A% *}"; A="${A#* }"
 [ -d "$STATE_HOME" ] || mkdir "$STATE_HOME"
-echo "$val" > "$STATE_HOME/$property.prev"
+[ -z "$op" ] || B="$(calc -p "round($A $op $B, $PRECISION)")"
+echo "$A" > "$STATE_HOME/$property.prev"
+echo "$property : $A -> $B (${time}s)"
 
-[ -z "$op" ] || target="$(calc -p "round($val $op $target, $PRECISION)")"
-d="$(calc -p "round(($target - $val) * $timestep / $time, $PRECISION)")"
-echo "$property : $val -> $target (${time}s)" > /dev/stderr
-[ "$d" == "0" ] && exit
-for v in $(seq "$val" "$d" "$target") "$target"; do
-  [ "$char" == "q" ] && v="$(calc -p "round($v)")"
-  busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay "$property" "$char" "$v"
-  sleep $timestep
+TA="$(date +%s%2N)"; TC="$TA"
+TB="$(calc -p "$TA + 100 * $time")"
+DT="$(calc -p "round(($B - $A) / ($TB - $TA), 2 * $PRECISION)")"
+while [ true ]; do
+  TC="$(date +%s%2N)"
+  DX="$(calc -p "min($TB, $TC) - $TA")"
+  C="$(calc -p "round($A + $DT * $DX, 2)")"
+  [ "$char" = "q" ] && C="$(calc -p "round($C)")"
+  busctl --user -- set-property rs.wl-gammarelay / rs.wl.gammarelay "$property" "$char" "$C"
+  [ "$TC" -lt "$TB" ] && sleep "$timestep" || break
 done

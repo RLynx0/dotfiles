@@ -17,12 +17,13 @@ char="${A% *}"; A="${A#* }"
 [ -d "$STATE_HOME" ] || mkdir "$STATE_HOME"
 [ -z "$op" ] || B="$(calc -p "round($A $op $B, $PRECISION)")"
 echo "$A" > "$STATE_HOME/$property.prev"
+echo "$$" > "$STATE_HOME/$property.lock"
 echo "$property : $A -> $B (${time}s)"
 
 TA="$(date +%s%2N)"; TC="$TA"
 TB="$(calc -p "$TA + 100 * $time")"
 DT="$(calc -p "round(($B - $A) / ($TB - $TA), 2 * $PRECISION)")"
-while [ true ]; do
+while [ "$(cat "$STATE_HOME/$property.lock")" = "$$" ]; do
   TC="$(date +%s%2N)"
   DX="$(calc -p "min($TB, $TC) - $TA")"
   C="$(calc -p "round($A + $DT * $DX, 2)")"

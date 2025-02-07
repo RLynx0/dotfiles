@@ -1,0 +1,46 @@
+#!/usr/bin/bash
+
+while getopts "f:n:i:h" arg; do
+    case $arg in
+    f)
+        sound_file="$OPTARG"
+        ;;
+    n)
+        notify_title="$OPTARG"
+        ;;
+    i)
+        notify_icon_path="$OPTARG"
+        ;;
+    *)
+        echo "Usage: $(basename $0) [OPTIONS] [MESSAGE]"
+        printf "\nArguments:\n"
+        echo "  [MESSAGE]  Message to print to the console"
+        echo "             Also used as body of pop-up notification"
+        printf "\nOptions:\n"
+        echo "  -f <SOUND FILE>          Path to sound file that should be played"
+        echo "                           If this fails, the default bell sound is used"
+        echo "  -n <NOTIFICATION TITLE>  Title of pop-up notification"
+        echo "                           A notification is only sent if this is set"
+        echo "  -i <NOTIFICATION ICON>   Path to icon to use for pop-up notification"
+        echo "                           Does nothing if -n is not set"
+        echo "  -h                       Print this help message"
+        exit 1
+    esac
+done
+shift $(($OPTIND-1))
+
+function sound {
+    command -v play > /dev/null &&
+    play $sound_file &> /dev/null ||
+    printf "\a"
+}
+
+function notify {
+    notify-send -i "$notify_icon_path" \
+    "$notify_title" "$message"
+}
+
+[ -z "$@" ] && message="Alert!" || message="$@"
+[ -z "$sound_file" ] || sound &
+[ -z "$notify_title" ] || notify &
+echo "$message"

@@ -1,0 +1,124 @@
+#!/usr/bin/bash
+
+color="auto"
+
+while getopts "ca:i:h" arg; do
+    case $arg in
+    c)
+        color="always"
+        ;;
+    a)
+        alert_sound="$OPTARG"
+        ;;
+    i)
+        alert_icon="$OPTARG"
+        ;;
+    *)
+        echo "Usage: $(basename $0) [OPTIONS]"
+        printf "\nOptions:\n"
+        echo "  -c                      Force arch package installers to use color"
+        echo "  -a <ALERT SOUND>        Path to sound file to play when done"
+        echo "                          This will also send a pop-up notification"
+        echo "  -i <NOTIFICATION ICON>  Path to icon to use for pop-up notification"
+        echo "                          Does nothing if -a is not set"
+        echo "  -h                      Print this help message"
+        exit 1
+    esac
+done
+shift $(($OPTIND-1))
+
+
+print_separator() {
+    printf "%s\n\n" "---"
+}
+
+# Debian
+if command -v apt > /dev/null
+then
+    echo " Updating Apt..."
+    sudo apt update
+    sudo apt dist-upgrade
+    sudo apt full-upgrade
+    sudo apt autopurge
+    print_separator
+fi
+if command -v snap > /dev/null
+then
+    echo " Refreshing Snap..."
+    sudo snap refresh
+    print_separator
+fi
+
+# RedHat
+if command -v dnf > /dev/null
+then
+    echo "󱄛 Updating Dnf..."
+    sudo dnf distro-sync
+    sudo dnf upgrade
+    sudo dnf autoremove
+    print_separator
+fi
+
+# Arch
+if command -v yay > /dev/null
+then
+    echo "󰣇 Updating Yay..."
+    yay --color "$color" -Syu
+    yay -Qdt > /dev/null &&
+    yay --color "$color" -Rnsc $(yay -Qdt | awk '{print $1}')
+    skip_pacman=1
+    print_separator
+fi
+if command -v paru > /dev/null
+then
+    echo "󰣇 Updating Paru..."
+    paru --color "$color" -Syu
+    paru -Qdt > /dev/null &&
+    paru --color "$color" -Rnsc $(paru -Qdt | awk '{print $1}')
+    skip_pacman=1
+    print_separator
+fi
+if command -v pacman > /dev/null &&
+    [ -z $skip_pacman ]
+then
+    echo "󰣇 Updating Pacman..."
+    sudo pacman --color "$color" -Syu
+    pacman -Qdt > /dev/null &&
+    pacman --color "$color" -Rnsc $(pacman -Qdt | awk '{print $1}')
+    print_separator
+fi
+
+# Rust
+if command -v rustup > /dev/null
+then
+    echo "🦀 Updating Rust..."
+    rustup update
+    print_separator
+fi
+
+# Haskell
+if command -v ghcup > /dev/null
+then
+    echo " Updating Haskell..."
+    ghcup upgrade 2>&1 |
+        tee /dev/stderr |
+        awk -F "'" '/New \w+ version available/ {print $2}' |
+        tee /dev/stdout |
+        sh
+
+    ghcup gc
+    print_separator
+fi
+
+# Locate
+if command -v updatedb > /dev/null
+then
+    echo "Updating Database..."
+    sudo updatedb
+    print_separator
+fi
+
+command -v alert > /dev/null &&
+    [ "$alert_sound" != "" ] &&
+    alert -f "$alert_sound" -n "$(basename $0)" -i "$alert_icon" 'Done!' ||
+    echo 'Done!'

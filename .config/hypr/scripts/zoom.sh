@@ -40,4 +40,5 @@ new_scale="$(\
 [ "$new_scale" != "" ] \
 && hyprctl keyword monitor "desc:$description, preferred, $offset, $new_scale" \
 && sleep 0.2 \
-&& notify 
+&& notify \
+&& waypaper --restore

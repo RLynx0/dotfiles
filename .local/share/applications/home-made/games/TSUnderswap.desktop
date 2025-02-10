@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=TS! Underswap
 Comment=Launch TS!Underwap AppImage
-Exec=sh -c '$HOME/bin/appimage/ts-underswap-demo-2.0.4-linux.appimage'
+Exec=sh -c '$XDG_DATA_HOME/bin/appimage/ts-underswap-demo-2.0.4-linux.appimage'
 Icon=ts_underswap_icon
 Terminal=false
 Type=Application

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Undertale Yellow
 Comment=Launch Undertale Yellow with Wine
-Exec=sh -c 'wine "$HOME/bin/exe/Undertale Yellow v1_1/Undertale Yellow.exe"'
+Exec=sh -c 'wine "$XDG_DATA_HOME/bin/exe/Undertale Yellow v1_1/Undertale Yellow.exe"'
 Icon=undertale_yellow
 Terminal=false
 Type=Application

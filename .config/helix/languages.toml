@@ -25,3 +25,7 @@ name = "binary"
 [language.debugger.templates.args]
 program = "{0}"
 runInTerminal = true
+
+[[language]]
+name = "css"
+auto-format = false

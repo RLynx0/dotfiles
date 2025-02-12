@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Cave Story
 Comment=Launch Cave Story with Wine
-Exec=sh -c 'WINEPREFIX="$XDG_DATA_HOME/wine32" gamescope -F nearest -w 640 -h 480 -W 1920 -H 1080 -- wine "$XDG_DATA_HOME/bin/exe/CaveStory/Doukutsu.exe"'
+Exec=sh -c 'WINEPREFIX="$XDG_DATA_HOME/wine32" gamescope -F nearest -w 640 -h 480 -W 1920 -H 1080 -- wine "$HOME/.local/bin/exe/CaveStory/Doukutsu.exe"'
 Icon=cavestory_icon
 Terminal=false
 Type=Application

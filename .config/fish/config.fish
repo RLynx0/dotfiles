@@ -31,7 +31,7 @@ export WINEPREFIX="$XDG_DATA_HOME/wine"
 # SETTING PATH
 set -a PAs "$XDG_CONFIG_HOME/cabal/bin"
 set -a PAs "$XDG_CONFIG_HOME/cargo/bin"
-set -a PAs "$XDG_DATA_HOME/bin"
+set -a PAs "$HOME/.local/bin"
 
 for pa in $PAs
     if not string match -q $pa $PATH

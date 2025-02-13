@@ -24,15 +24,10 @@
 }
 
 window#waybar {
-  background-color: rgba(34, 36, 38, 0.75);
-  color: #ddd;
+  background-color: rgba(34, 36, 38, 0.8);
   transition-property: background-color;
   transition-duration: .5s;
   border-radius: 1.2em;
-}
-
-window#waybar.hidden {
-  opacity: 0.2;
 }
 
 window#waybar.empty {
@@ -40,29 +35,42 @@ window#waybar.empty {
 }
 
 button {
-  box-shadow: inset 0 -3px transparent;
-  border: none;
-  border-radius: 0;
+  border-radius: 25%;
 }
 
 button:hover {
-  background: inherit;
-  box-shadow: inset 0 -3px #fff;
+  background: rgba(80, 80, 80, 0.3);
+  box-shadow: inset 0 -3px #888;
+}
+
+#workspaces {
+  background-color: rgba(18, 20, 22, 0.6);
+  color: #ccc;
+  border-radius: 2em;
 }
 
 #workspaces button {
-  background-color: transparent;
-  color: #fff;
   font-weight: bold;
-  padding: 0 5px;
-  border-radius: 1.2em;
+  padding: 0 0.4em;
+  margin: 0.4em 0.2em;
+  border-radius: 50%;
+  transition-property: background-color;
+  transition-duration: .25s;
 }
-
-#workspaces button.focused {
-  background-color: #64727D;
-  box-shadow: inset 0 -3px #ffffff;
+#workspaces button:first-child {
+  margin-left: 0.4em;
 }
-
+#workspaces button:last-child {
+  margin-right: 0.4em;
+}
+#workspaces button,
+#workspaces button.active:last-child:first-child {
+  background-color: transparent;
+}
+#workspaces button.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
 #workspaces button.urgent {
   background-color: #eb4d4b;
 }
@@ -84,10 +92,10 @@ button:hover {
 #custom-hyprpanic,
 .group-child * {
   min-width: 1.2em;
-  background-color: rgba(80, 80, 80, 0.5);
-  color: #ddd;
+  background-color: rgba(18, 20, 22, 0.6);
+  color: #ccc;
   padding: 0 0.5em;
-  border-radius: 1.2em;
+  border-radius: 2em;
 }
 
 .group-child:not(:first-child) * {
@@ -157,7 +165,7 @@ label:focus {
 @keyframes blink {
   to {
     background-color: #d05850;
-    color: #ddd;
+    color: #ccc;
   }
 }
 

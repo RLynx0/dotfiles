@@ -62,7 +62,7 @@
     },
     "on-click": "~/.config/scripts/sonorum.sh mute",
     "on-click-right": "pavucontrol",
-    "on-click-middle": "helvum"
+    "on-click-middle": "carla || helvum"
   },
   "wireplumber": {
     "format": "{icon} {volume}%",
@@ -76,7 +76,7 @@
     "scroll-step": 1,
     "on-click": "~/.config/scripts/sonorum.sh mute",
     "on-click-right": "pavucontrol",
-    "on-click-middle": "helvum"
+    "on-click-middle": "carla || helvum"
   },
   "bluetooth": {
     "format": "  {status}",

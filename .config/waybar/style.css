@@ -91,7 +91,7 @@ button:hover {
 #custom-exit,
 #custom-hyprpanic,
 .group-child * {
-  min-width: 1.2em;
+  min-width: 1.5em;
   background-color: rgba(18, 20, 22, 0.6);
   color: #ccc;
   padding: 0 0.5em;

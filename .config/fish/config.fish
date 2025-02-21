@@ -76,12 +76,7 @@ alias youtube='librewolf https://www.youtube.com'
 function rep
     set command "$(history --null | fzf --read0)"
     test -z "$command" && return 130
-    echo "$command" | awk -v c=">" '
-    { print c, $0 }
-    { c = " " }
-    l > m { m = l }
-    END { printf "\n" }'
-    eval "$command"
+    wtype "$command"
 end
 
 # ZOXIDE

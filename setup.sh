@@ -90,8 +90,10 @@ function tui_loop {
     [ "$npacks" -lt "$nlines" ] && nlines="$npacks"
 
     tc="$tab_cursor"; c="${cursors["$tc"]}"
-    f="${firsts["$tc"]}"; l="$((f + "$nlines" - 1))"
     target="${tab_packages["$c"]}"
+    f="${firsts["$tc"]}"; lcomf="$((npacks - "$nlines"))"
+    [ "$f" -gt "$lcomf" ] && f="$lcomf"
+    l="$((f + "$nlines" - 1))"
     clear; draw_tab "$tab_name" "$f" "$l" "$c"
 
     case "$(get_tui_input)" in
@@ -111,9 +113,9 @@ function tui_loop {
     [ "$tc" -ge "${#ALL_TABS[@]}" ] && tc="$((tc - ${#ALL_TABS[@]}))"
     [ "$c" -lt "0" ] && c="$((c + $npacks))" && f="$((c + 1 - "$nlines"))"
     [ "$c" -ge "$npacks" ] && c="$((c - $npacks))" && f="$c"
-    fcomf="$((c - "$LMARGIN"))"; lcomf="$((c + 1 + "$LMARGIN" - "$nlines"))"
-    [ "$c" -ge "$LMARGIN" ] && [ "$f" -gt "$fcomf" ] && f="$fcomf"
-    [ "$c" -lt "$(("$npacks" - LMARGIN))" ] && [ "$f" -lt "$lcomf" ] && f="$lcomf"
+    lcomf="$((c - "$LMARGIN"))"; fcomf="$((c + 1 + "$LMARGIN" - "$nlines"))"
+    [ "$c" -ge "$LMARGIN" ] && [ "$f" -gt "$lcomf" ] && f="$lcomf"
+    [ "$c" -lt "$(("$npacks" - LMARGIN))" ] && [ "$f" -lt "$fcomf" ] && f="$fcomf"
     firsts["$tab_cursor"]="$f"; cursors["$tab_cursor"]="$c"; tab_cursor="$tc"
   done
 }

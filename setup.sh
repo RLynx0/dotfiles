@@ -2,9 +2,11 @@
 
 LMARGIN="2"
 
-IN_SELECT="select"; IN_ENTER="confirm"; IN_QUIT="quit"
-IN_U="up"; IN_D="down"; IN_L="left"; IN_R="right"
+IN_ENTER="confirm"; IN_QUIT="quit"
+IN_SELALL="all"; IN_SELECT="select"
 IN_NEXT="next"; IN_PREV="previous"
+IN_L="left"; IN_R="right"
+IN_U="up"; IN_D="down";
 
 MAX_PAC_LEN="0"
 CURRENT_TAB=""
@@ -43,6 +45,7 @@ function get_tui_input {
       "[A" | "k") echo "$IN_U"; return ;;
       "[B" | "j") echo "$IN_D"; return ;;
       " ") echo "$IN_SELECT"; return ;;
+      "a") echo "$IN_SELALL"; return ;;
       $'\t') echo "$IN_NEXT"; return ;;
       "[Z") echo "$IN_PREV"; return ;;
       "q") echo "$IN_QUIT"; return ;;
@@ -66,6 +69,21 @@ function draw_tab {
     [ -n "${PACKAGES["$package_name"]}" ] && sel="+" || sel=" "
     [ "$i" = "$4" ] && sel="[$sel]" || sel=" $sel "
     printf "%s %s %s\n" "$sel" "$package_name" "${PAC_DESC["$package_name"]}"
+  done
+}
+
+function toggle_package {
+  [ -n "${PACKAGES["$1"]}" ] \
+  && state="" || state="true"
+  PACKAGES["$1"]="$state"
+}
+
+function toggle_tab {
+  local -n tab_packages="$1"
+  [ -n "${PACKAGES["$2"]}" ] \
+  && state="" || state="true"
+  for package in ${tab_packages[@]}; do
+    PACKAGES["$package"]="$state"
   done
 }
 
@@ -101,9 +119,8 @@ function tui_loop {
       "$IN_D") c="$((c + 1))" ;;
       "$IN_PREV" | "$IN_L") tc="$((tc - 1))" ;;
       "$IN_NEXT" | "$IN_R") tc="$((tc + 1))" ;;
-      "$IN_SELECT") [ -n "${PACKAGES["$target"]}" ] \
-        && PACKAGES["$target"]="" \
-        || PACKAGES["$target"]="true" ;;
+      "$IN_SELECT") toggle_package "$target" ;;
+      "$IN_SELALL") toggle_tab "$tab_name" "$target" ;;
       "$IN_ENTER") echo "accept changes" ;;
       "$IN_QUIT") return ;;
     esac

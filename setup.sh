@@ -120,4 +120,101 @@ function tui_loop {
   done
 }
 
+
+# Essential system utilities
+n_t ESSENTIAL "Essential Packages"
+n_p bash       "Bourne Again Shell"
+n_p coreutils  "GNU core utilities (basic file, shell, and text manipulation utilities)"
+n_p curl       "Command-line tool for transferring data with URLs"
+n_p git        "Distributed version control system"
+n_p wget       "Network utility to retrieve files from the web"
+n_p htop       "Interactive process viewer"
+n_p neovim     "Modern Vim-based text editor"
+
+# Desktop Environment / Window Manager
+n_t DESKTOP "Desktop Environment / Window Manager"
+n_p hyprland    "The Hyprland window manager"
+n_p waybar      "Highly customizable status bar for Wayland"
+n_p waypaper    "Wayland wallpaper picker supporting multiple engines"
+n_p wofi        "Launcher for Wayland (like rofi but for Wayland)"
+n_p swaylock    "Screen locker for Wayland"
+n_p mako        "Lightweight Wayland notification daemon"
+
+# Development Tools
+n_t DEVELOPMENT "Development Tools"
+n_p gcc         "GNU Compiler Collection"
+n_p clang       "LLVM-based C/C++ compiler"
+n_p make        "Build automation tool"
+n_p cmake       "Cross-platform build system"
+n_p python3     "Python programming language"
+n_p nodejs      "JavaScript runtime"
+n_p yarn        "Package manager for JavaScript"
+n_p docker      "Containerization platform"
+n_p rustup      "Rust language installer and version manager"
+n_p go          "The Go programming language"
+n_p jq          "Command-line JSON processor"
+
+# Networking
+n_t NETWORKING "Networking Tools"
+n_p nmap       "Network scanner"
+n_p netcat     "Networking utility for reading/writing across networks"
+n_p iproute2   "Networking utilities for Linux"
+n_p openvpn    "Open-source VPN client"
+n_p wireguard  "Fast, modern VPN protocol"
+n_p speedtest-cli "Command-line internet speed test tool"
+
+# Multimedia
+n_t MULTIMEDIA "Multimedia Tools"
+n_p mpv        "Lightweight media player"
+n_p ffmpeg     "Multimedia framework for processing video and audio"
+n_p imagemagick "Image editing and conversion tools"
+n_p pulseaudio "Sound server for Linux"
+n_p pipewire   "Next-gen audio and video server for Linux"
+n_p pavucontrol "GUI volume control for PulseAudio"
+
+# Productivity
+n_t PRODUCTIVITY "Productivity Tools"
+n_p zathura    "Minimalist document viewer"
+n_p libreoffice "Open-source office suite"
+n_p thunderbird "Email client"
+n_p obsidian   "Markdown-based knowledge management app"
+n_p calcurse   "Command-line calendar and scheduling app"
+
+# Gaming
+n_t GAMING "Gaming Tools"
+n_p steam      "Steam client for Linux"
+n_p lutris     "Open gaming platform for Linux"
+n_p wine       "Compatibility layer for running Windows apps on Linux"
+n_p proton-ge  "Custom Proton builds for better compatibility with Windows games"
+n_p mangohud   "FPS and system performance overlay"
+
+# Security & Privacy
+n_t SECURITY "Security and Privacy"
+n_p gpg        "GNU Privacy Guard for encryption and signing"
+n_p keepassxc  "Password manager"
+n_p ufw        "Uncomplicated Firewall"
+n_p tor        "Anonymity network"
+n_p fail2ban   "Intrusion prevention system"
+
+# System Monitoring
+n_t MONITORING "System Monitoring Tools"
+n_p btop       "Resource monitor similar to htop"
+n_p glances    "Cross-platform monitoring tool"
+n_p iotop      "Display I/O usage per process"
+n_p iftop      "Network bandwidth monitoring"
+
+# Virtualization
+n_t VIRTUALIZATION "Virtualization Software"
+n_p qemu       "Emulator and virtualizer"
+n_p virt-manager "GUI for managing virtual machines"
+n_p vagrant    "Development environments manager"
+n_p virtualbox "Virtual machine software"
+
+# Fun / Misc
+n_t MISC "Miscellaneous and Fun Packages"
+n_p figlet     "Create ASCII text banners"
+n_p lolcat     "Rainbow-colored text output"
+n_p cowsay     "ASCII art cows that talk"
+n_p fortune    "Display random quotes or wisdom"
+
 tui_loop

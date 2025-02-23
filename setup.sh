@@ -11,6 +11,7 @@ CURRENT_TAB=""
 declare -a ALL_TABS
 declare -A PACKAGES
 declare -A PAC_DESC
+declare -A PAC_LENS
 declare -A TAB_TITLE
 
 function n_t {
@@ -26,8 +27,10 @@ function n_p {
   PACKAGES["$1"]="true"
   PAC_DESC["$1"]="$2"
   cur_tab+=("$1")
-  [ "$(wc -m <<< "$1")" -gt "$MAX_PAC_LEN" ] \
-  && MAX_PAC_LEN="$(wc -m <<< "$1")"
+  len="$(wc -m <<< "$1")"
+  PAC_LENS["$1"]="$len"
+  [ "$len" -gt "$MAX_PAC_LEN" ] \
+  && MAX_PAC_LEN="$len"
 }
 
 function get_tui_input {
@@ -73,7 +76,7 @@ function tui_loop {
     cursors+=("0"); firsts+=("0")
     local -n tab="$tab_name"
     for package_name in ${tab[@]}; do
-      pac_len="$(wc -m <<< "$package_name")"
+      pac_len="${PAC_LENS["$package_name"]}"
       offset="$(printf " %.0s" $(seq "$pac_len" "$MAX_PAC_LEN"))"
       PAC_DESC["$package_name"]="${offset}${PAC_DESC["$package_name"]}"
     done

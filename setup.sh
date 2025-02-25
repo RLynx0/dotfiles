@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LMARGIN="2"
+LMARGIN="1"
 
 IN_ENTER="confirm"; IN_QUIT="quit"
 IN_SELALL="all"; IN_SELECT="select"
@@ -63,15 +63,18 @@ function draw_tab {
     && printf "[%s] " "$t" \
     || printf " %s  " "$t"
   done
-  printf -- "\n--- %s ---\n\n" "${TAB_TITLE["$tab_name"]}"
+  printf -- "\n\n--- %s ---\n" "${TAB_TITLE["$tab_name"]}"
 
   local -n tab_packages="$tab_name"
   for i in $(seq "$2" "$3"); do
     package_name="${tab_packages["$i"]}"
     [ -n "${PACKAGES["$package_name"]}" ] && sel="+" || sel=" "
     [ "$i" = "$4" ] && sel="[$sel]" || sel=" $sel "
-    printf "%s %s %s\n" "$sel" "$package_name" "${PAC_DESC["$package_name"]}"
+    printf "\n%s %s %s" "$sel" "$package_name" "${PAC_DESC["$package_name"]}"
   done
+
+  printf "\n%.0s" $(seq "$5")
+  printf "> SPACE: toggle   A: toggle all   0: go to top   ENTER: save & quit   Q: cancel\r"
 }
 
 function toggle_package {
@@ -105,16 +108,18 @@ function tui_loop {
   while true; do
     tab_name="${ALL_TABS["$tab_cursor"]}"
     local -n tab_packages="$tab_name"
-    nlines="$(($(tput lines) - 4))"
+    height="$(tput lines)"
+    nlines="$((height - 5))"
     npacks="${#tab_packages[@]}"
     [ "$npacks" -lt "$nlines" ] && nlines="$npacks"
+    empty="$((height - 4 - "$nlines"))"
 
     tc="$tab_cursor"; c="${cursors["$tc"]}"
     target="${tab_packages["$c"]}"
     f="${firsts["$tc"]}"; lcomf="$((npacks - "$nlines"))"
     [ "$f" -gt "$lcomf" ] && f="$lcomf"
     l="$((f + "$nlines" - 1))"
-    clear; draw_tab "$tab_name" "$f" "$l" "$c"
+    clear; draw_tab "$tab_name" "$f" "$l" "$c" "$empty"
 
     case "$(get_tui_input)" in
       "$IN_U") c="$((c - 1))" ;;

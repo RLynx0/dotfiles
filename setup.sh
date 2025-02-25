@@ -1,7 +1,7 @@
 #!/bin/bash
 
-LMARGIN="1"
-Z="\033[K"
+LMARGIN_FRAC="8"
+N="\033[K\n"
 
 IN_ENTER="confirm"; IN_QUIT="quit"
 IN_SELALL="all"; IN_SELECT="select"
@@ -64,18 +64,18 @@ function draw_tab {
     && printf "[%s]" "$t" \
     || printf " %s " "$t"
   done
-  printf -- "$Z\n$Z\n--- %s ---$Z\n$Z" "${TAB_TITLE["$tab_name"]}"
+  printf -- "$N$N--- %s ---$N" "${TAB_TITLE["$tab_name"]}"
 
   local -n tab_packages="$tab_name"
   for i in $(seq "$2" "$3"); do
     package_name="${tab_packages["$i"]}"
     [ -n "${PACKAGES["$package_name"]}" ] && sel="+" || sel=" "
     [ "$i" = "$4" ] && sel="[$sel]" || sel=" $sel "
-    printf "\n%s %s %s$Z" "$sel" "$package_name" "${PAC_DESC["$package_name"]}"
+    printf "$N%s %s %s" "$sel" "$package_name" "${PAC_DESC["$package_name"]}"
   done
 
-  printf "\n$Z%.0s" $(seq "$5")
-  printf "> SPACE: toggle   A: toggle all   0: go to top   ENTER: save & quit   Q: cancel\r"
+  printf "$N%.0s" $(seq "$5")
+  printf "> SPACE: toggle   A: toggle all   0: go to top   ENTER: save & quit   Q: cancel\033[K\r"
 }
 
 function toggle_package {
@@ -113,6 +113,7 @@ function tui_loop {
     nlines="$((height - 5))"
     npacks="${#tab_packages[@]}"
     [ "$npacks" -lt "$nlines" ] && nlines="$npacks"
+    lmargin="$((nlines / "$LMARGIN_FRAC" + 1))"
     empty="$((height - 4 - "$nlines"))"
 
     tc="$tab_cursor"; c="${cursors["$tc"]}"
@@ -140,9 +141,9 @@ function tui_loop {
     [ "$tc" -ge "${#ALL_TABS[@]}" ] && tc="$((tc - ${#ALL_TABS[@]}))"
     [ "$c" -lt "0" ] && c="$((c + $npacks))" && f="$((c + 1 - "$nlines"))"
     [ "$c" -ge "$npacks" ] && c="$((c - $npacks))" && f="$c"
-    lcomf="$((c - "$LMARGIN"))"; fcomf="$((c + 1 + "$LMARGIN" - "$nlines"))"
-    [ "$c" -ge "$LMARGIN" ] && [ "$f" -gt "$lcomf" ] && f="$lcomf"
-    [ "$c" -lt "$(("$npacks" - LMARGIN))" ] && [ "$f" -lt "$fcomf" ] && f="$fcomf"
+    lcomf="$((c - "$lmargin"))"; fcomf="$((c + 1 + "$lmargin" - "$nlines"))"
+    [ "$c" -ge "$lmargin" ] && [ "$f" -gt "$lcomf" ] && f="$lcomf"
+    [ "$c" -lt "$(("$npacks" - lmargin))" ] && [ "$f" -lt "$fcomf" ] && f="$fcomf"
     firsts["$tab_cursor"]="$f"; cursors["$tab_cursor"]="$c"; tab_cursor="$tc"
   done
 }

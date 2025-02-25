@@ -1,6 +1,7 @@
 #!/bin/bash
 
 LMARGIN="1"
+Z="\033[K"
 
 IN_ENTER="confirm"; IN_QUIT="quit"
 IN_SELALL="all"; IN_SELECT="select"
@@ -60,20 +61,20 @@ function draw_tab {
   tab_name="$1"
   for t in ${ALL_TABS[@]}; do
     [ "$t" = "$tab_name" ] \
-    && printf "[%s] " "$t" \
-    || printf " %s  " "$t"
+    && printf "[%s]" "$t" \
+    || printf " %s " "$t"
   done
-  printf -- "\n\n--- %s ---\n" "${TAB_TITLE["$tab_name"]}"
+  printf -- "$Z\n$Z\n--- %s ---$Z\n$Z" "${TAB_TITLE["$tab_name"]}"
 
   local -n tab_packages="$tab_name"
   for i in $(seq "$2" "$3"); do
     package_name="${tab_packages["$i"]}"
     [ -n "${PACKAGES["$package_name"]}" ] && sel="+" || sel=" "
     [ "$i" = "$4" ] && sel="[$sel]" || sel=" $sel "
-    printf "\n%s %s %s" "$sel" "$package_name" "${PAC_DESC["$package_name"]}"
+    printf "\n%s %s %s$Z" "$sel" "$package_name" "${PAC_DESC["$package_name"]}"
   done
 
-  printf "\n%.0s" $(seq "$5")
+  printf "\n$Z%.0s" $(seq "$5")
   printf "> SPACE: toggle   A: toggle all   0: go to top   ENTER: save & quit   Q: cancel\r"
 }
 
@@ -119,7 +120,8 @@ function tui_loop {
     f="${firsts["$tc"]}"; lcomf="$((npacks - "$nlines"))"
     [ "$f" -gt "$lcomf" ] && f="$lcomf"
     l="$((f + "$nlines" - 1))"
-    clear; draw_tab "$tab_name" "$f" "$l" "$c" "$empty"
+    printf "\r\033[A%.0s" $(seq "$height")
+    draw_tab "$tab_name" "$f" "$l" "$c" "$empty"
 
     case "$(get_tui_input)" in
       "$IN_U") c="$((c - 1))" ;;
@@ -242,4 +244,4 @@ n_p lolcat     "Rainbow-colored text output"
 n_p cowsay     "ASCII art cows that talk"
 n_p fortune    "Display random quotes or wisdom"
 
-tui_loop
+tui_loop; clear

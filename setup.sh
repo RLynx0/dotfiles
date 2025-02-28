@@ -10,12 +10,15 @@ IN_L="left"; IN_R="right"
 IN_U="up"; IN_D="down"
 IN_ZERO="zero"
 
+TAB_DRAW_LEN="0"
 MAX_PAC_LEN="0"
 CURRENT_TAB=""
 declare -a ALL_TABS
 declare -A PACKAGES
+declare -A PAC_DISP
 declare -A PAC_DESC
 declare -A PAC_LENS
+declare -A TAB_LENS
 declare -A TAB_TITLE
 
 function n_t {
@@ -24,14 +27,18 @@ function n_t {
   CURRENT_TAB="$1"
   TAB_TITLE["$1"]="$2"
   TAB_FCOL_LEN["$1"]="0"
+  len="$(("$(wc -m <<< "$1")" - 1))"
+  TAB_LENS["$1"]="$len"
+  TAB_DRAW_LEN="$((TAB_DRAW_LEN + "$len" + 2))"
 }
 
 function n_p {
   local -n cur_tab="$CURRENT_TAB"
   PACKAGES["$1"]="true"
+  PAC_DISP["$1"]="$1"
   PAC_DESC["$1"]="$2"
   cur_tab+=("$1")
-  len="$(wc -m <<< "$1")"
+  len="$(("$(wc -m <<< "$1")" - 1))"
   PAC_LENS["$1"]="$len"
   [ "$len" -gt "$MAX_PAC_LEN" ] \
   && MAX_PAC_LEN="$len"
@@ -59,23 +66,41 @@ function get_tui_input {
 
 function draw_tab {
   tab_name="$1"
+  l_start="$2"
+  l_end="$3"
+  hover="$4"
+  width="$5"
+  empty="$6"
+
+  used_width="0"
   for t in ${ALL_TABS[@]}; do
+    tab_width="$(("${TAB_LENS["$t"]}" + 2))"
+    used_width="$((used_width + tab_width))"
+    [ "$used_width" -gt "$width" ] \
+    && used_width="$tab_width" \
+    && printf "$N"
     [ "$t" = "$tab_name" ] \
     && printf "[%s]" "$t" \
     || printf " %s " "$t"
   done
   printf -- "$N$N--- %s ---$N" "${TAB_TITLE["$tab_name"]}"
 
+  desc_width="$(("$5" - "$MAX_PAC_LEN" - 6))"
   local -n tab_packages="$tab_name"
   for i in $(seq "$2" "$3"); do
     package_name="${tab_packages["$i"]}"
+    disp="${PAC_DISP["$package_name"]}"
+    desc="${PAC_DESC["$package_name"]}"
+    desc="${desc:0:"$desc_width"}"
     [ -n "${PACKAGES["$package_name"]}" ] && sel="+" || sel=" "
-    [ "$i" = "$4" ] && sel="[$sel]" || sel=" $sel "
-    printf "$N%s %s %s" "$sel" "$package_name" "${PAC_DESC["$package_name"]}"
+    [ "$i" = "$hover" ] && sel="[$sel]" || sel=" $sel "
+    printf "$N%s %s %s" "$sel" "$disp" "$desc"
   done
 
-  printf "$N%.0s" $(seq "$5")
-  printf "> SPACE: toggle   A: toggle all   0: go to top   ENTER: save & quit   Q: cancel\033[K\r"
+  printf "$N%.0s" $(seq "$empty")
+  [ "$width" -ge "80" ] \
+  && printf "> SPACE: toggle   A: toggle all   0: go to top   ENTER: save & quit   Q: cancel"
+  printf "\033[K\r"
 }
 
 function toggle_package {
@@ -102,19 +127,22 @@ function tui_loop {
     for package_name in ${tab[@]}; do
       pac_len="${PAC_LENS["$package_name"]}"
       offset="$(printf " %.0s" $(seq "$pac_len" "$MAX_PAC_LEN"))"
-      PAC_DESC["$package_name"]="${offset}${PAC_DESC["$package_name"]}"
+      PAC_DISP["$package_name"]="${package_name}${offset}"
     done
   done
 
   while true; do
     tab_name="${ALL_TABS["$tab_cursor"]}"
     local -n tab_packages="$tab_name"
+    width="$(tput cols)"
     height="$(tput lines)"
-    nlines="$((height - 5))"
+    addtabheight="$((TAB_DRAW_LEN / "$width"))"
+    reserved="$((addtabheight + 4))"
+    nlines="$((height - "$reserved" - 1))"
     npacks="${#tab_packages[@]}"
     [ "$npacks" -lt "$nlines" ] && nlines="$npacks"
     lmargin="$((nlines / "$LMARGIN_FRAC" + 1))"
-    empty="$((height - 4 - "$nlines"))"
+    empty="$((height - "$reserved" - "$nlines"))"
 
     tc="$tab_cursor"; c="${cursors["$tc"]}"
     target="${tab_packages["$c"]}"
@@ -122,7 +150,7 @@ function tui_loop {
     [ "$f" -gt "$lcomf" ] && f="$lcomf"
     l="$((f + "$nlines" - 1))"
     printf "\r\033[A%.0s" $(seq "$height")
-    draw_tab "$tab_name" "$f" "$l" "$c" "$empty"
+    draw_tab "$tab_name" "$f" "$l" "$c" "$width" "$empty"
 
     case "$(get_tui_input)" in
       "$IN_U") c="$((c - 1))" ;;

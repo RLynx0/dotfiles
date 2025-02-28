@@ -7,8 +7,9 @@ TERMINAL="${TERMINAL:-"kitty"}"
 HEIGHT="${HEIGHT:-"60%"}"
 WIDTH="${WIDTH:-"60%"}"
 
-[ ! $(command -v "$TERMINAL") ] && echo "$TERMINAL is not installed" && exit 1
-[ ! $(command -v hyprctl) ] && echo "hyprctl is not installed" && exit 1
+[ ! $(command -v "$TERMINAL") ] && echo "$TERMINAL is not installed" >&2 && exit 1
+[ ! $(command -v hyprctl) ] && echo "hyprctl is not installed" >&2 && exit 1
+[ ! $(command -v cava) ] && echo "cava is not installed" >&2 && exit 1
 
 function already_open {
   hyprctl clients | awk '

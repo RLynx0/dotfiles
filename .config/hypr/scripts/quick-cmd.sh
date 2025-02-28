@@ -8,9 +8,9 @@ TERMINAL="${TERMINAL:-"kitty"}"
 WIDTH="${WIDTH:-"40%"}"
 DOCK="${DOCK:-"r"}"
 
-[ ! $(command -v "$TERMINAL") ] && echo "$TERMINAL is not installed" && exit 1
-[ ! $(command -v hyprctl) ] && echo "hyprctl is not installed" && exit 1
-[ ! $(command -v calc) ] && echo "calc is not installed" && exit 1
+[ ! $(command -v "$TERMINAL") ] && echo "$TERMINAL is not installed" >&2 && exit 1
+[ ! $(command -v hyprctl) ] && echo "hyprctl is not installed" >&2 && exit 1
+[ ! $(command -v calc) ] && echo "calc is not installed" >&2 && exit 1
 
 BORDER="$(hyprctl getoption general:border_size | head -1 | awk '{ print $2 }')"
 GAPS=($(hyprctl getoption general:gaps_out | head -1 | awk -F ': ' '{ print $2 }'))

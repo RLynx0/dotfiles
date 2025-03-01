@@ -100,7 +100,7 @@ function draw_tab {
   printf "$N%.0s" $(seq "$empty")
   [ "$width" -ge "80" ] \
   && printf "> SPACE: toggle   A: toggle all   0: go to top   ENTER: save & quit   Q: cancel"
-  printf "\033[K\r"
+  printf "\033[K"
 }
 
 function toggle_package {
@@ -149,7 +149,7 @@ function tui_loop {
     f="${firsts["$tc"]}"; lcomf="$((npacks - "$nlines"))"
     [ "$f" -gt "$lcomf" ] && f="$lcomf"
     l="$((f + "$nlines" - 1))"
-    printf "\r\033[A%.0s" $(seq "$height")
+    printf "\e[H\e[?25l"
     draw_tab "$tab_name" "$f" "$l" "$c" "$width" "$empty"
 
     case "$(get_tui_input)" in
@@ -273,4 +273,4 @@ n_p lolcat     "Rainbow-colored text output"
 n_p cowsay     "ASCII art cows that talk"
 n_p fortune    "Display random quotes or wisdom"
 
-tui_loop; clear
+tui_loop; clear; printf "\e[?25h"

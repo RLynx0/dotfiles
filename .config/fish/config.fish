@@ -77,13 +77,6 @@ alias twitch='librewolf https://www.twitch.tv'
 alias whatsapp='librewolf https://web.whatsapp.com'
 alias youtube='librewolf https://www.youtube.com'
 
-# FUNCTIONS
-function rep
-    set command "$(history --null | fzf --read0)"
-    test -z "$command" && return 130
-    wtype "$command"
-end
-
 # ZOXIDE
 zoxide init --cmd cd fish | source
 

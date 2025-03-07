@@ -3,12 +3,11 @@
 LMARGIN_FRAC="8"
 N="\033[K\n"
 
-IN_ENTER="confirm"; IN_QUIT="quit"
-IN_SELALL="all"; IN_SELECT="select"
-IN_NEXT="next"; IN_PREV="previous"
-IN_L="left"; IN_R="right"
-IN_U="up"; IN_D="down"
-IN_ZERO="zero"
+# INPUT CONSTANTS
+TUI_IN_SPACE=" ";         TUI_IN_ENTER="";            TUI_IN_TAB=$'\t';           TUI_IN_SHIFT_TAB=$'\E[Z'
+TUI_IN_ARROW_UP=$'\E[A';  TUI_IN_ARROW_DOWN=$'\E[B';  TUI_IN_ARROW_LEFT=$'\E[D';  TUI_IN_ARROW_RIGHT=$'\E[C'
+TUI_IN_ESCAPE=$'\E';      TUI_IN_BACKSPACE=$'\177';   TUI_IN_DELETE=$'\E[3~';     TUI_IN_INSERT=$'\E[2~'
+TUI_IN_END=$'\E[F';       TUI_IN_HOME=$'\E[H';        TUI_IN_PAGE_UP=$'\E[5~';    TUI_IN_PAGE_DOWN=$'\E[6~'
 
 TAB_DRAW_LEN="0"
 MAX_PAC_LEN="0"
@@ -44,24 +43,10 @@ function n_p {
   && MAX_PAC_LEN="$len"
 }
 
-function get_tui_input {
-  while true; do
-    IFS= read -rsn1 key
-    [[ "$key" == $'\e' ]] && read -rsn2 key
-    case "$key" in
-      "[D" | "h") echo "$IN_L"; return ;;
-      "[C" | "l") echo "$IN_R"; return ;;
-      "[A" | "k") echo "$IN_U"; return ;;
-      "[B" | "j") echo "$IN_D"; return ;;
-      " ") echo "$IN_SELECT"; return ;;
-      "a") echo "$IN_SELALL"; return ;;
-      $'\t') echo "$IN_NEXT"; return ;;
-      "[Z") echo "$IN_PREV"; return ;;
-      "0") echo "$IN_ZERO"; return ;;
-      "q") echo "$IN_QUIT"; return ;;
-      "") echo "$IN_ENTER"; return ;;
-    esac
-  done
+function tui_get_input {
+  IFS= read -rsn1 key
+  while read -t 0.01 -rsn1 x; do key+=$x; done
+  echo "$key"
 }
 
 function draw_tab {
@@ -152,16 +137,16 @@ function tui_loop {
     printf "\e[H\e[?25l"
     draw_tab "$tab_name" "$f" "$l" "$c" "$width" "$empty"
 
-    case "$(get_tui_input)" in
-      "$IN_U") c="$((c - 1))" ;;
-      "$IN_D") c="$((c + 1))" ;;
-      "$IN_ZERO") c="0"; f="0" ;;
-      "$IN_PREV" | "$IN_L") tc="$((tc - 1))" ;;
-      "$IN_NEXT" | "$IN_R") tc="$((tc + 1))" ;;
-      "$IN_SELECT") toggle_package "$target" ;;
-      "$IN_SELALL") toggle_tab "$tab_name" "$target" ;;
-      "$IN_ENTER") echo "accept changes" ;;
-      "$IN_QUIT") return ;;
+    case "$(tui_get_input)" in
+      "$TUI_IN_SHIFT_TAB" | "$TUI_IN_ARROW_LEFT" | "h") tc="$((tc - 1))" ;;
+      "$TUI_IN_TAB" | "$TUI_IN_ARROW_RIGHT" | "l")      tc="$((tc + 1))" ;;
+      "$TUI_IN_ARROW_DOWN" | "j")                       c="$((c + 1))" ;;
+      "$TUI_IN_ARROW_UP" | "k")                         c="$((c - 1))" ;;
+      "$TUI_IN_HOME" | "0")                             c="0"; f="0" ;;
+      "$TUI_IN_ENTER")                                  echo "accept changes" ;;
+      "$TUI_IN_SPACE")                                  toggle_package "$target" ;;
+      "a")                                              toggle_tab "$tab_name" "$target" ;;
+      "q")                                              return ;;
     esac
 
     # Clamp cursors, adjust first position

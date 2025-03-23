@@ -1,0 +1,11 @@
+#!/bin/bash
+function dont {
+  notify-send "Nooo don't kill yourself" "Your so sexy aha" \
+  --icon "$XDG_CONFIG_HOME/scripts/essential/dont.jpg" --expire-time 5000
+}
+trap dont SIGTERM
+while true; do
+  sleep infinity &
+  wait $!
+done
+

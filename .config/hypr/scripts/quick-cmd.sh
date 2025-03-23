@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 CTX_FILE="/tmp/quick-cmd.ctx.tmp"
 SET_FILE="/tmp/quick-cmd.set.tmp"

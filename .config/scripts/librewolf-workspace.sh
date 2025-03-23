@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # Get current workspace
 cur="$(hyprctl monitors \

@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 CTX_FILE="/tmp/quick-cava.ctx.tmp"
 CMD_CLASS="${CMD_CLASS:-"quick-view"}"

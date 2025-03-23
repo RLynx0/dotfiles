@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 PRECISION="3"
 property="$1"

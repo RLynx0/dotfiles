@@ -6,7 +6,7 @@ CMD_CLASS="${CMD_CLASS:-"quick-cmd"}"
 WORKSPACE="${WORKSPACE:-"quick-cmd"}"
 TERMINAL="${TERMINAL:-"kitty"}"
 WIDTH="${WIDTH:-"40%"}"
-DOCK="${DOCK:-"r"}"
+DOCK="${1:-"r"}"
 
 [ ! $(command -v "$TERMINAL") ] && echo "$TERMINAL is not installed" >&2 && exit 1
 [ ! $(command -v hyprctl) ] && echo "hyprctl is not installed" >&2 && exit 1

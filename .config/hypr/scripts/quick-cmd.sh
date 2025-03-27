@@ -28,17 +28,6 @@ function probe_reserved {
   calc -p "2 * ($y1 - $y0 + $BORDER) + $GAP_T + $GAP_B"
 }
 
-function already_open {
-  hyprctl clients | awk '
-    /workspace:/ { w = $3 }
-    /class:/ { print $2, w }
-  ' | grep "$CMD_CLASS (special:$WORKSPACE)" > /dev/null
-}
-
-function focused {
-  hyprctl activewindow | grep "class: $CMD_CLASS" > /dev/null
-}
-
 function unchanged {
   p="$(cat "$CTX_FILE")"
   g="$(echo ${GAPS[@]} | tr " " ",")"
@@ -51,19 +40,35 @@ function unchanged {
   [ "$c" == "$p" ]
 }
 
+function already_open {
+  hyprctl clients | grep "class: $CMD_CLASS" > /dev/null
+}
+
+function focused {
+  hyprctl activewindow | grep "class: $CMD_CLASS" > /dev/null
+}
+
+function in_ws {
+  hyprctl activewindow \
+  | grep -E "^\s*workspace:.+special:$WORKSPACE" > /dev/null
+}
+
 function save_setup {
   hyprctl activewindow | awk '
     /^\s*size:/ { print "resizeactive -- \"exact "$2"\"" }
     /^\s*at:/ { print "moveactive -- \"exact "$2"\"" }
   ' | tr ',' ' ' | awk '{ print "hyprctl dispatch "$0 }
-  ' > "$SET_FILE"
+  ' > "$SET_FILE";
 }
 
-function open_and_move {
+function open_cmd {
   hyprctl keyword windowrulev2 "float, class:$CMD_CLASS"
   "$TERMINAL" --class "$CMD_CLASS" & sleep 0.1
-  hyprctl dispatch focuswindow "class:$CMD_CLASS"
-  hyprctl dispatch movetoworkspace "special:$WORKSPACE"
+}
+
+function toggle_view {
+  in_ws && hyprctl dispatch togglespecialworkspace "$WORKSPACE" \
+  || hyprctl dispatch focuswindow "class:$CMD_CLASS"
 }
 
 function dock_horizontal {
@@ -74,6 +79,7 @@ function dock_horizontal {
 }
 
 function setup {
+  in_ws || hyprctl dispatch movetoworkspace "special:$WORKSPACE"
   unchanged && sh "$SET_FILE" && return
   hyprctl dispatch setfloating
   hyprctl dispatch resizeactive "exact $WIDTH 100%"
@@ -84,8 +90,7 @@ function setup {
   save_setup
 }
 
-already_open \
-&& hyprctl dispatch togglespecialworkspace "$WORKSPACE" \
-|| open_and_move > /dev/null
+already_open || open_cmd > /dev/null
+toggle_view > /dev/null
 focused && setup
 exit 0

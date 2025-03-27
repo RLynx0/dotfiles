@@ -1,8 +1,13 @@
 [Desktop Entry]
 Name=Twitch
-Comment=Open Twitch in Firefox
-Exec=/usr/bin/firefox https://www.twitch.tv/
+Comment=Open Twitch in Browser
+Exec=sh -c '$HOME/.config/scripts/librewolf-workspace.sh https://twitch.tv'
 Icon=twitch_icon
 Terminal=false
 Type=Application
 Categories=Network;AudioVideo;Player;
+Actions=stream-manager
+
+[Desktop Action stream-manager]
+Name=Open Stream Manager
+Exec=sh -c '$HOME/.config/scripts/librewolf-workspace.sh https://dashboard.twitch.tv/stream-manager'

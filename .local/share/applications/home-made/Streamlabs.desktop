@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Streamlabs
+Comment=Open Streamlabs Dashboard in Browser
+Exec=sh -c '$HOME/.config/scripts/librewolf-workspace.sh https://streamlabs.com/dashboard'
+Icon=streamlabs_icon
+Terminal=false
+Type=Application
+Categories=Network;Utility;

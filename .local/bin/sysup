@@ -88,6 +88,14 @@ then
     print_separator
 fi
 
+# Flatpak
+if command -v flatpak > /dev/null
+then
+    echo " Updating Flatpak..."
+    flatpak update
+    print_separator
+fi
+
 # Rust
 if command -v rustup > /dev/null
 then

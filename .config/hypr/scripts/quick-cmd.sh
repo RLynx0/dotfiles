@@ -63,7 +63,8 @@ function save_setup {
 
 function open_cmd {
   hyprctl keyword windowrulev2 "float, class:$CMD_CLASS"
-  "$TERMINAL" --class "$CMD_CLASS" & sleep 0.1
+  "$TERMINAL" --class "$CMD_CLASS" &
+  while true; do already_open && break; sleep 0.01; done
 }
 
 function toggle_view {

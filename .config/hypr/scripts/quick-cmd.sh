@@ -1,17 +1,18 @@
 #!/bin/bash
 
-CTX_FILE="/tmp/quick-cmd.ctx.tmp"
-SET_FILE="/tmp/quick-cmd.set.tmp"
-CMD_CLASS="${CMD_CLASS:-"quick-cmd"}"
-WORKSPACE="${WORKSPACE:-"quick-cmd"}"
+CTX_FILE="/tmp/quick-$2-cmd.ctx.tmp"
+SET_FILE="/tmp/quick-$2-cmd.set.tmp"
+CMD_CLASS="${CMD_CLASS:-"quick-$2-cmd"}"
+WORKSPACE="${WORKSPACE:-"quick-$2-cmd"}"
 TERMINAL="${TERMINAL:-"kitty"}"
 HEIGHT="${HEIGHT:-"100%"}"
 WIDTH="${WIDTH:-"40%"}"
 DOCK="${1:-"ur"}"
 
-[ ! $(command -v "$TERMINAL") ] && echo "$TERMINAL is not installed" >&2 && exit 1
-[ ! $(command -v hyprctl) ] && echo "hyprctl is not installed" >&2 && exit 1
-[ ! $(command -v calc) ] && echo "calc is not installed" >&2 && exit 1
+[ -z "$2" ] || command -v "$2" > /dev/null || { echo "$2 is not installed" >&2; exit 1; }
+command -v "$TERMINAL" > /dev/null || { echo "$TERMINAL is not installed" >&2; exit 1; }
+command -v hyprctl > /dev/null || { echo "hyprctl is not installed" >&2; exit 1; }
+command -v calc > /dev/null || { echo "calc is not installed" >&2; exit 1; }
 
 BORDER="$(hyprctl getoption general:border_size | head -1 | awk '{ print $2 }')"
 GAPS=($(hyprctl getoption general:gaps_out | head -1 | awk -F ': ' '{ print $2 }'))
@@ -64,7 +65,7 @@ function save_setup {
 
 function open_cmd {
   hyprctl keyword windowrulev2 "float, class:$CMD_CLASS"
-  "$TERMINAL" --class "$CMD_CLASS" &
+  "$TERMINAL" --class "$CMD_CLASS" "$1" &
   while true; do already_open && break; sleep 0.01; done
 }
 
@@ -97,7 +98,7 @@ function setup {
   save_setup
 }
 
-already_open || open_cmd > /dev/null
+already_open || open_cmd "$2" > /dev/null
 toggle_view > /dev/null
 focused && setup
 exit 0

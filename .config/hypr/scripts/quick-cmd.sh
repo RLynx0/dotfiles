@@ -5,8 +5,9 @@ SET_FILE="/tmp/quick-cmd.set.tmp"
 CMD_CLASS="${CMD_CLASS:-"quick-cmd"}"
 WORKSPACE="${WORKSPACE:-"quick-cmd"}"
 TERMINAL="${TERMINAL:-"kitty"}"
+HEIGHT="${HEIGHT:-"100%"}"
 WIDTH="${WIDTH:-"40%"}"
-DOCK="${1:-"r"}"
+DOCK="${1:-"ur"}"
 
 [ ! $(command -v "$TERMINAL") ] && echo "$TERMINAL is not installed" >&2 && exit 1
 [ ! $(command -v hyprctl) ] && echo "hyprctl is not installed" >&2 && exit 1
@@ -32,10 +33,10 @@ function unchanged {
   p="$(cat "$CTX_FILE")"
   g="$(echo ${GAPS[@]} | tr " " ",")"
   c="$(hyprctl monitors \
-  | awk -v g="$g" -v d="$DOCK" '
+  | awk -v c="$WIDHT $HEIGHT $DOCK $g" '
     /^Monitor/ { m = $2 }
     /^\s*scale:/ { s = $2 }
-    /^\s*focused: yes/ { print m, s, g, d }
+    /^\s*focused: yes/ { print m,s,c }
   ' | tee "$CTX_FILE")"
   [ "$c" == "$p" ]
 }
@@ -72,22 +73,27 @@ function toggle_view {
   || hyprctl dispatch focuswindow "class:$CMD_CLASS"
 }
 
-function dock_horizontal {
+function dock {
   hyprctl dispatch movewindow "$1"
-  if   [ "$1" == "l" ]; then hyprctl dispatch moveactive -- "$GAP_L 0"
-  elif [ "$1" == "r" ]; then hyprctl dispatch moveactive -- "-$GAP_R 0"
-  fi
+  case "$1" in
+    u|t) hyprctl dispatch moveactive -- "0 $GAP_T"  ;;
+    d|b) hyprctl dispatch moveactive -- "0 -$GAP_B" ;;
+    l)   hyprctl dispatch moveactive -- "$GAP_L 0"  ;;
+    r)   hyprctl dispatch moveactive -- "-$GAP_R 0" ;;
+  esac
 }
 
 function setup {
   in_ws || hyprctl dispatch movetoworkspace "special:$WORKSPACE"
   unchanged && sh "$SET_FILE" && return
   hyprctl dispatch setfloating
-  hyprctl dispatch resizeactive "exact $WIDTH 100%"
+  hyprctl dispatch resizeactive "exact $WIDTH $HEIGHT"
   hyprctl dispatch resizeactive -- "0 -$(probe_reserved)"
   hyprctl dispatch centerwindow 1
   hyprctl dispatch moveactive -- "0 $OFF_Y"
-  dock_horizontal "$DOCK"
+  while read -n1 d; do case "$d" in
+    u|t|d|b|l|r) dock "$d" ;;
+  esac; done <<< "$DOCK"
   save_setup
 }
 

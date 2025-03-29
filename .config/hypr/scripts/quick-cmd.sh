@@ -9,10 +9,10 @@ HEIGHT="${HEIGHT:-"100%"}"
 WIDTH="${WIDTH:-"40%"}"
 DOCK="${1:-"ur"}"
 
-[ -z "$2" ] || command -v "$2" > /dev/null || { echo "$2 is not installed" >&2; exit 1; }
-command -v "$TERMINAL" > /dev/null || { echo "$TERMINAL is not installed" >&2; exit 1; }
-command -v hyprctl > /dev/null || { echo "hyprctl is not installed" >&2; exit 1; }
-command -v calc > /dev/null || { echo "calc is not installed" >&2; exit 1; }
+[ -z "$2" ] || command -v "$2" > /dev/null || { echo "'$2' is not installed" >&2; exit 1; }
+command -v "$TERMINAL" > /dev/null || { echo "'$TERMINAL' is not installed" >&2; exit 1; }
+command -v hyprctl > /dev/null || { echo "'hyprctl' is not installed" >&2; exit 1; }
+command -v calc > /dev/null || { echo "'calc' is not installed" >&2; exit 1; }
 
 BORDER="$(hyprctl getoption general:border_size | head -1 | awk '{ print $2 }')"
 GAPS=($(hyprctl getoption general:gaps_out | head -1 | awk -F ': ' '{ print $2 }'))
@@ -20,21 +20,26 @@ GAP_T="${GAPS[0]}"; GAP_R="${GAPS[1]}";
 GAP_B="${GAPS[2]}"; GAP_L="${GAPS[3]}";
 OFF_Y="$(calc -p "round(($GAP_T - $GAP_B) / 2)")"
 
-function ypos {
-  hyprctl activewindow | awk -F ',' '/^\s*at:/ { print $2 }'
+function pos {
+  hyprctl activewindow \
+  | awk '/^\s*at:/ { print $2 }' \
+  | tr "," " ";
 }
 
 function probe_reserved {
-  hyprctl dispatch centerwindow 0 > /dev/null; y0="$(ypos)"
-  hyprctl dispatch centerwindow 1 > /dev/null; y1="$(ypos)"
-  calc -p "2 * ($y1 - $y0 + $BORDER) + $GAP_T + $GAP_B"
+  hyprctl dispatch centerwindow 0 > /dev/null; p0=($(pos))
+  hyprctl dispatch centerwindow 1 > /dev/null; p1=($(pos))
+  x0="${p0[0]}"; y0="${p0[1]}"; x1="${p1[0]}"; y1="${p1[1]}"
+  ox="$(calc -p "2 * ($x1 - $x0 + $BORDER) + $GAP_L + $GAP_R")"
+  oy="$(calc -p "2 * ($y1 - $y0 + $BORDER) + $GAP_T + $GAP_B")"
+  echo "-$ox -$oy"
 }
 
 function unchanged {
   p="$(cat "$CTX_FILE")"
   g="$(echo ${GAPS[@]} | tr " " ",")"
   c="$(hyprctl monitors \
-  | awk -v c="$WIDHT $HEIGHT $DOCK $g" '
+  | awk -v c="$WIDTH $HEIGHT $DOCK $g" '
     /^Monitor/ { m = $2 }
     /^\s*scale:/ { s = $2 }
     /^\s*focused: yes/ { print m,s,c }
@@ -89,7 +94,7 @@ function setup {
   unchanged && sh "$SET_FILE" && return
   hyprctl dispatch setfloating
   hyprctl dispatch resizeactive "exact $WIDTH $HEIGHT"
-  hyprctl dispatch resizeactive -- "0 -$(probe_reserved)"
+  hyprctl dispatch resizeactive -- "$(probe_reserved)"
   hyprctl dispatch centerwindow 1
   hyprctl dispatch moveactive -- "0 $OFF_Y"
   while read -n1 d; do case "$d" in
@@ -99,6 +104,6 @@ function setup {
 }
 
 already_open || open_cmd "$2" > /dev/null
-toggle_view > /dev/null
-focused && setup
+toggle_view                   > /dev/null
+focused && setup              > /dev/null
 exit 0

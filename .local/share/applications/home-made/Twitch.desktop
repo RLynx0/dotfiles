@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Twitch
 Comment=Open Twitch in Browser
-Exec=sh -c '$HOME/.config/scripts/librewolf-workspace.sh https://twitch.tv'
+Exec=sh -c '$HOME/.config/scripts/librewolf-workspace.sh https://www.twitch.tv'
 Icon=twitch_icon
 Terminal=false
 Type=Application

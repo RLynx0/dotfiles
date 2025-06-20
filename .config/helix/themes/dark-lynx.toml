@@ -28,7 +28,7 @@
 "ui.window" = { fg = "da2", bg = "da0" }
 "ui.popup" = { bg = "da1" }
 "ui.help" = { bg = "da0" }
-"ui.statusline" = { fg = "ligh1", bg = "da2" }
+"ui.statusline" = { fg = "la2", bg = "da2" }
 "ui.statusline.inactive" = { fg = "la0", bg = "db1" }
 "ui.statusline.normal" = { fg = "green_dark", bg = "green", modifiers = ["bold"] }
 "ui.statusline.insert" = { fg = "orange_dark", bg = "orange", modifiers = ["bold"] }

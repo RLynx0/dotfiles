@@ -124,18 +124,18 @@ function large {
   printf "       $O████▄████     $M████▄████       \n"
   printf "       $O█████████     $M█████████       \n"
   printf "       $O ▀█████▀      $M ▀█████▀        \n"
-  printf "       $O   ▀▀▀        $M   ▀▀▀          \n"
+  printf "       $O   ▀█▀        $M   ▀█▀          \n"
   printf "                                     \n"
   printf "$Y▄██▄ ▄██▄     $R▄██▄ ▄██▄     $B▄██▄ ▄██▄\n"
   printf "$Y█████████     $R█████████     $B█████████\n"
   printf "$Y▀███████▀     $R▀███████▀     $B▀███████▀\n"
   printf "$Y  ▀███▀       $R  ▀███▀       $B  ▀███▀  \n"
-  printf "                                     \n"
+  printf "$Y    ▀         $R    ▀         $B    ▀    \n"
   printf "       $G ▄▄   ▄▄      $C ▄▄   ▄▄        \n"
   printf "       $G████▄████     $C████▄████       \n"
   printf "       $G█████████     $C█████████       \n"
   printf "       $G ▀█████▀      $C ▀█████▀        \n"
-  printf "       $G   ▀▀▀        $C   ▀▀▀          \n"
+  printf "       $G   ▀█▀        $C   ▀█▀          \n"
 }
 
 

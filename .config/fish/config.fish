@@ -7,6 +7,7 @@ export XDG_STATE_HOME="$HOME/.local/state"
 # HOME CLEANING
 export CALCHISTFILE="$XDG_CACHE_HOME/calc_history"
 export CARGO_HOME="$XDG_CONFIG_HOME/cargo"
+export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
 export DOTNET_CLI_HOME="$XDG_DATA_HOME/dotnet"
 export GHCUP_USE_XDG_DIRS="true"
 export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
@@ -32,6 +33,7 @@ export STACK_XDG=1
 export W3M_DIR="$XDG_DATA_HOME/w3m"
 export WGETRC="$XDG_CONFIG_HOME/wgetrc"
 export WINEPREFIX="$XDG_DATA_HOME/wine"
+alias wget="wget --hsts-file='$XDG_DATA_HOME/wget-hsts'"
 
 # SETTING PATH
 set -a PAs "$XDG_CONFIG_HOME/cabal/bin"

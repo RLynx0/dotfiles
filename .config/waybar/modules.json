@@ -42,7 +42,7 @@
     ]
   },
   "pulseaudio": {
-    "format": "{icon} {volume}% {format_source}",
+    "format": "{icon}{volume}% {format_source}",
     "format-muted": "󰝟 {format_source}",
     "format-source": " {volume}%",
     "format-source-muted": " ",
@@ -55,7 +55,7 @@
       "portable": " ",
       "car": " ",
       "default": [
-        "󰕿",
+        "󰕿 ",
         "󰖀 ",
         "󰕾 "
       ]
@@ -65,10 +65,10 @@
     "on-click-middle": "carla || helvum"
   },
   "wireplumber": {
-    "format": "{icon} {volume}%",
+    "format": "{icon}{volume}%",
     "format-muted": "󰝟",
     "format-icons": [
-      "󰕿",
+      "󰕿 ",
       "󰖀 ",
       "󰕾 "
     ],
@@ -129,11 +129,11 @@
       "charging": " ",
       "plugged": " ",
       "default": [
-        "  ",
-        "  ",
-        "  ",
-        "  ",
-        "  "
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
       ]
     }
   },

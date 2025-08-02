@@ -3,18 +3,12 @@
 color="auto"
 
 while getopts "ca:i:h" arg; do
-    case $arg in
-    c)
-        color="always"
-        ;;
-    a)
-        alert_sound="$OPTARG"
-        ;;
-    i)
-        alert_icon="$OPTARG"
-        ;;
+    case "$arg" in
+    c) color="always" ;;
+    a) alert_sound="$OPTARG" ;;
+    i) alert_icon="$OPTARG" ;;
     *)
-        echo "Usage: $(basename $0) [OPTIONS]"
+        echo "Usage: $(basename "$0") [OPTIONS]"
         printf "\nOptions:\n"
         echo "  -c                      Force arch package installers to use color"
         echo "  -a <ALERT SOUND>        Path to sound file to play when done"
@@ -33,8 +27,7 @@ print_separator() {
 }
 
 # Debian
-if command -v apt > /dev/null
-then
+if command -v apt > /dev/null; then
     echo " Updating Apt..."
     sudo apt update
     sudo apt dist-upgrade
@@ -42,16 +35,14 @@ then
     sudo apt autopurge
     print_separator
 fi
-if command -v snap > /dev/null
-then
+if command -v snap > /dev/null; then
     echo " Refreshing Snap..."
     sudo snap refresh
     print_separator
 fi
 
 # RedHat
-if command -v dnf > /dev/null
-then
+if command -v dnf > /dev/null; then
     echo "󱄛 Updating Dnf..."
     sudo dnf distro-sync
     sudo dnf upgrade
@@ -60,73 +51,73 @@ then
 fi
 
 # Arch
-if command -v yay > /dev/null
-then
+if command -v yay > /dev/null; then
     echo "󰣇 Updating Yay..."
     yay --color "$color" -Syu
     yay -Qdt > /dev/null &&
-    yay --color "$color" -Rnsc $(yay -Qdt | awk '{print $1}')
+    yay --color "$color" -Rnsc "$(yay -Qdt | awk '{print $1}')"
     skip_pacman=1
     print_separator
 fi
-if command -v paru > /dev/null
-then
+if command -v paru > /dev/null; then
     echo "󰣇 Updating Paru..."
     paru --color "$color" -Syu
     paru -Qdt > /dev/null &&
-    paru --color "$color" -Rnsc $(paru -Qdt | awk '{print $1}')
+    paru --color "$color" -Rnsc "$(paru -Qdt | awk '{print $1}')"
     skip_pacman=1
     print_separator
 fi
-if command -v pacman > /dev/null &&
-    [ -z $skip_pacman ]
-then
+if command -v pacman > /dev/null && [ -z "$skip_pacman" ]; then
     echo "󰣇 Updating Pacman..."
     sudo pacman --color "$color" -Syu
     pacman -Qdt > /dev/null &&
-    pacman --color "$color" -Rnsc $(pacman -Qdt | awk '{print $1}')
+    pacman --color "$color" -Rnsc "$(pacman -Qdt | awk '{print $1}')"
     print_separator
 fi
 
 # Flatpak
-if command -v flatpak > /dev/null
-then
+if command -v flatpak > /dev/null; then
     echo " Updating Flatpak..."
     flatpak update
     print_separator
 fi
 
 # Rust
-if command -v rustup > /dev/null
-then
+if command -v rustup > /dev/null; then
     echo "🦀 Updating Rust..."
     rustup update
     print_separator
 fi
 
 # Haskell
-if command -v ghcup > /dev/null
-then
+if command -v ghcup > /dev/null; then
     echo " Updating Haskell..."
-    ghcup upgrade 2>&1 |
-        tee /dev/stderr |
-        awk -F "'" '/New \w+ version available/ {print $2}' |
-        tee /dev/stdout |
-        sh
+    ghcup upgrade 2>&1 \
+    | tee /dev/stderr \
+    | awk -F "'" '/New \w+ version available/ {print $2}' \
+    | tee /dev/stdout \
+    | sh;
 
     ghcup gc
     print_separator
 fi
 
 # Locate
-if command -v updatedb > /dev/null
-then
+if command -v updatedb > /dev/null; then
     echo "Updating Database..."
-    sudo updatedb
+    sudo updatedb --verbose \
+    | awk -v c="$(tput cols)" '
+        {
+            r = substr($0, c - 3, 1)
+            printf "\r\033[K%s", substr($0, 0, c - 3)
+            if(r) printf "..."
+            n++
+        }
+        END { printf "\r\033[K%d Files\n", n }'
     print_separator
 fi
 
-command -v alert > /dev/null &&
-    [ "$alert_sound" != "" ] &&
-    alert -f "$alert_sound" -n "$(basename $0)" -i "$alert_icon" 'Done!' ||
-    echo 'Done!'
+command -v alert > /dev/null \
+&& [ "$alert_sound" != "" ] \
+&& alert -f "$alert_sound" -n "$(basename "$0")" -i "$alert_icon" 'Done!' \
+|| echo 'Done!'

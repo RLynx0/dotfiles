@@ -13,14 +13,14 @@
 #                   |__/           |__/                            #
 
 
-sink="@DEFAULT_AUDIO_SINK@"
-limit="1.2"
+LIMIT="${LIMIT:-"1.2"}"
+SINK="${SINK:-"@DEFAULT_AUDIO_SINK@"}"
 
 
 function get_volume {
-  updated_volume="$(wpctl get-volume "$sink" | awk '{print $2}')"
+  updated_volume="$(wpctl get-volume "$SINK" | awk '{print $2}')"
   volume_percent="$(calc "round($updated_volume * 100)" | awk '{print $1}')"
-  volume_percent_scaled="$(calc "round($updated_volume / $limit * 100)" | awk '{print $1}')"
+  volume_percent_scaled="$(calc "round($updated_volume / $LIMIT * 100)" | awk '{print $1}')"
 }
 
 function notification {
@@ -37,7 +37,7 @@ function notification {
 
 function notification_volume {
   get_volume
-  [ -z "$(wpctl get-volume "$sink" | awk '{print $3}')" ] || display_muted=" (muted)"
+  [ -z "$(wpctl get-volume "$SINK" | awk '{print $3}')" ] || display_muted=" (muted)"
 
   N_Hint="int:value:$volume_percent_scaled"
   N_Body="Volume set to $volume_percent%$display_muted"
@@ -46,7 +46,7 @@ function notification_volume {
 }
 
 function notification_mute {
-  if [ -z "$(wpctl get-volume "$sink" | awk '{print $3}')" ]; then
+  if [ -z "$(wpctl get-volume "$SINK" | awk '{print $3}')" ]; then
     get_volume
     
     N_Hint="int:value:$volume_percent_scaled"
@@ -67,13 +67,13 @@ else
 fi
 
 if [ "$1" == "up" ]; then
-  wpctl set-volume -l "$limit" "$sink" "${amount}%+"
   notification_volume
+  wpctl set-volume -l "$LIMIT" "$SINK" "${amount}%+"
 elif [ "$1" == "down" ]; then
-  wpctl set-volume "$sink" "${amount}%-"
   notification_volume
+  wpctl set-volume "$SINK" "${amount}%-"
 elif [ "$1" == "mute" ]; then
-  wpctl set-mute "$sink" toggle
+  wpctl set-mute "$SINK" toggle
   notification_mute
 else
   echo "Usage: $(basename "$0") (up [amount]|down [amount]|mute)" 1>&2

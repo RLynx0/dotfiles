@@ -1,2 +1,3 @@
 .config/helix/runtime
 .config/hypr/wallpapers/*
+.config/zellij/*.bak*

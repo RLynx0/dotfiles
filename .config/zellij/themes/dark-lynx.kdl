@@ -1,0 +1,15 @@
+themes {
+    dark-lynx {
+        fg 200 202 204
+        bg 51 54 57
+        red 208 88 80
+        green 96 208 160
+        yellow 208 176 128
+        blue 80 160 208
+        magenta 192 128 216
+        orange 208 128 80
+        cyan 96 192 192
+        black 18 20 22
+        white 251 253 255
+    }
+}

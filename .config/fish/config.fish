@@ -1,83 +1,76 @@
 # XDG BASE DIRECTORIES
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_CACHE_HOME="$HOME/.cache"
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_STATE_HOME="$HOME/.local/state"
+set -x XDG_CONFIG_HOME "$HOME/.config"
+set -x XDG_CACHE_HOME "$HOME/.cache"
+set -x XDG_DATA_HOME "$HOME/.local/share"
+set -x XDG_STATE_HOME "$HOME/.local/state"
 
 # HOME CLEANING
-export CALCHISTFILE="$XDG_CACHE_HOME/calc_history"
-export CARGO_HOME="$XDG_CONFIG_HOME/cargo"
-export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
-export DOTNET_CLI_HOME="$XDG_DATA_HOME/dotnet"
-export GHCUP_USE_XDG_DIRS="true"
-export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
-export GRADLE_USER_HOME="$XDG_DATA_HOME/gradle"
-export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc-2.0"
-export HISTFILE="$XDG_STATE_HOME/bash/history"
-export LESSHISTFILE="$XDG_CONFIG_HOME/less/history"
-export LESSKEY="$XDG_CONFIG_HOME/less/keys"
-export NODE_REPL_HISTORY="$XDG_DATA_HOME/node_repl_history"
-export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
-export NPM_CONFIG_PREFIX="$XDG_CONFIG_HOME/npm"
-export NPM_CONFIG_USERCONFIG="$NPM_CONFIG_PREFIX/npmrc"
-export NUGET_PACKAGES="$XDG_CACHE_HOME/NuGetPackages"
-export PARALLEL_HOME="$XDG_CONFIG_HOME/parallel"
-export PYTHONPYCACHEPREFIX="$XDG_CACHE_HOME/python"
-export PYTHONUSERBASE="$XDG_DATA_HOME/python"
-export PYTHON_HISTORY="$XDG_STATE_HOME/python/history"
-export RANDFILE="$XDG_DATA_HOME/randfile"
-export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
-export SCREENRC="$XDG_CONFIG_HOME/screen/screenrc"
-export SCREENDIR="$XDG_RUNTIME_DIR/screen"
-export STACK_XDG=1
-export W3M_DIR="$XDG_DATA_HOME/w3m"
-export WGETRC="$XDG_CONFIG_HOME/wgetrc"
-export WINEPREFIX="$XDG_DATA_HOME/wine"
+set -x CALCHISTFILE "$XDG_CACHE_HOME/calc_history"
+set -x CARGO_HOME "$XDG_CONFIG_HOME/cargo"
+set -x DOCKER_CONFIG "$XDG_CONFIG_HOME/docker"
+set -x DOTNET_CLI_HOME "$XDG_DATA_HOME/dotnet"
+set -x GHCUP_USE_XDG_DIRS true
+set -x GNUPGHOME "$XDG_CONFIG_HOME/gnupg"
+set -x GRADLE_USER_HOME "$XDG_DATA_HOME/gradle"
+set -x GTK2_RC_FILES "$XDG_CONFIG_HOME/gtk-2.0/gtkrc-2.0"
+set -x HISTFILE "$XDG_STATE_HOME/bash/history"
+set -x LESSHISTFILE "$XDG_CONFIG_HOME/less/history"
+set -x LESSKEY "$XDG_CONFIG_HOME/less/keys"
+set -x NODE_REPL_HISTORY "$XDG_DATA_HOME/node_repl_history"
+set -x NPM_CONFIG_CACHE "$XDG_CACHE_HOME/npm"
+set -x NPM_CONFIG_PREFIX "$XDG_CONFIG_HOME/npm"
+set -x NPM_CONFIG_USERCONFIG "$NPM_CONFIG_PREFIX/npmrc"
+set -x NUGET_PACKAGES "$XDG_CACHE_HOME/NuGetPackages"
+set -x PARALLEL_HOME "$XDG_CONFIG_HOME/parallel"
+set -x PYTHONPYCACHEPREFIX "$XDG_CACHE_HOME/python"
+set -x PYTHONUSERBASE "$XDG_DATA_HOME/python"
+set -x PYTHON_HISTORY "$XDG_STATE_HOME/python/history"
+set -x RANDFILE "$XDG_DATA_HOME/randfile"
+set -x RUSTUP_HOME "$XDG_DATA_HOME/rustup"
+set -x SCREENRC "$XDG_CONFIG_HOME/screen/screenrc"
+set -x SCREENDIR "$XDG_RUNTIME_DIR/screen"
+set -x STACK_XDG 1
+set -x W3M_DIR "$XDG_DATA_HOME/w3m"
+set -x WGETRC "$XDG_CONFIG_HOME/wgetrc"
+set -x WINEPREFIX "$XDG_DATA_HOME/wine"
 alias wget="wget --hsts-file='$XDG_DATA_HOME/wget-hsts'"
 
-# SETTING PATH
-set -a PAs "$XDG_CONFIG_HOME/cabal/bin"
-set -a PAs "$XDG_CONFIG_HOME/cargo/bin"
-set -a PAs "$HOME/.local/bin"
+# SET PATH
+for pa in \
+    "$XDG_CONFIG_HOME/cabal/bin" \
+    "$XDG_CONFIG_HOME/cargo/bin" \
+    "$HOME/.local/bin"
 
-for pa in $PAs
-    if not string match -q $pa $PATH
-        set PATH "$pa:$PATH"
-    end
+    contains $pa $PATH || set -x PATH "$pa" "$PATH"
 end
-
-set -e PAs
 
 # INPUT METHOD
 set -x QT_IM_MODULE fcitx5
 set -x SDL_IM_MODULE fcitx5
-set -x XMODIFIERS "@im=fcitx5"
+set -x XMODIFIERS '@im=fcitx5'
 
-# SYS VARS
-set EDITOR helix
+# SET EDITOR
+for ed in \
+    helix hx \
+    nvim vim vi
+
+    command -vq "$ed" && set -x EDITOR "$ed" && break
+end
 
 # Util Variables
-set terminal_pid (awk '{print $4}' /proc/(echo %self)/stat)
-set terminal (basename "/"(ps -fp $terminal_pid | awk 'END {print $8}'))
 set notification "$HOME/Personal/Music/sounds/martlet-bell.wav"
+set alert_image "$HOME/Personal/Pictures/renders/SuperSaiyanMartletSmol.gif"
 
 # ALIASES >:3
-alias hx='helix'
-alias netflix='qtwebflix'
-alias bg-sysup="yes '' | sysup -ca $notification -i $HOME/Personal/Pictures/renders/SuperSaiyanMartletSmol.gif | tee"
+command -vq helix && alias hx='helix'
+command -vq hx && alias helix='hx'
+alias bg-sysup="yes '' | sysup -ca $notification -i $alert_image | tee"
 alias rank-cmd='history | awk \'/^\w/{print $1}\' | sort | uniq -c | sort -rn'
-alias whats-my-motherfucking-name="whoami"
+alias whats-my-motherfucking-name='whoami'
 # overrides
-alias rereflect="rereflect -a $notification -i $HOME/Personal/Pictures/renders/SuperSaiyanMartletSmol.gif"
+alias rereflect="rereflect -a $notification -i $alert_image"
 # kittens
 alias icat='kitty +kitten icat'
-# open url
-alias corel='librewolf https://app.corelvector.com/'
-alias duolingo='librewolf https://www.duolingo.com'
-alias instagram='librewolf https://www.instagram.com'
-alias twitch='librewolf https://www.twitch.tv'
-alias whatsapp='librewolf https://web.whatsapp.com'
-alias youtube='librewolf https://www.youtube.com'
 
 # ZOXIDE
 zoxide init --cmd cd fish | source
@@ -86,20 +79,21 @@ zoxide init --cmd cd fish | source
 set -x fish_greeting
 if test (tty) = /dev/tty1
     Hyprland # Start automatically in default terminal
-else if tty | grep -vE "^/dev/tty[0-9]" >/dev/null
-    # STRATING STARSHIP
+else if status is-interactive
+    # STARTING STARSHIP
+    starship init fish | source
+    enable_transience
     function starship_transient_prompt_func
         starship module character
     end
-    starship init fish | source
-    enable_transience
 
     # GREETING
-    if command -v souls.sh >/dev/null
-        echo
-        printf "  %s\n" (souls.sh m)
-        echo
-    else if command -v neofetch >/dev/null
+    if command -vq souls.sh
+        souls.sh m | awk '
+            BEGIN { print "" }
+            { print "  " $0 }
+            END { print "" }'
+    else if command -vq neofetch
         echo
         neofetch | neofetch | grep --color=never -oxE '^.+$'
     end

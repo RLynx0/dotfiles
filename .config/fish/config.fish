@@ -64,7 +64,7 @@ set alert_image "$HOME/Personal/Pictures/renders/SuperSaiyanMartletSmol.gif"
 # ALIASES >:3
 command -vq helix && alias hx='helix'
 command -vq hx && alias helix='hx'
-alias bg-sysup="yes '' | sysup -ca $notification -i $alert_image | tee"
+alias bg-sysup="yes '' | sysup -cpa $notification -i $alert_image | tee"
 alias rank-cmd='history | awk \'/^\w/{print $1}\' | sort | uniq -c | sort -rn'
 alias whats-my-motherfucking-name='whoami'
 # overrides

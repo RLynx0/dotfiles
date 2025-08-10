@@ -2,15 +2,17 @@
 
 color="auto"
 
-while getopts "ca:i:h" arg; do
+while getopts "cpa:i:h" arg; do
     case "$arg" in
     c) color="always" ;;
+    p) force_pacman="yes";;
     a) alert_sound="$OPTARG" ;;
     i) alert_icon="$OPTARG" ;;
     *)
         echo "Usage: $(basename "$0") [OPTIONS]"
         printf "\nOptions:\n"
         echo "  -c                      Force arch package installers to use color"
+        echo "  -p                      Force using pacman as arch package installer"
         echo "  -a <ALERT SOUND>        Path to sound file to play when done"
         echo "                          This will also send a pop-up notification"
         echo "  -i <NOTIFICATION ICON>  Path to icon to use for pop-up notification"
@@ -51,7 +53,7 @@ if command -v dnf > /dev/null; then
 fi
 
 # Arch
-if command -v yay > /dev/null; then
+if command -v yay > /dev/null && [ -z "$force_pacman" ]; then
     echo "󰣇 Updating Yay..."
     yay --color "$color" -Syu
     yay -Qdt > /dev/null &&
@@ -59,7 +61,7 @@ if command -v yay > /dev/null; then
     skip_pacman=1
     print_separator
 fi
-if command -v paru > /dev/null; then
+if command -v paru > /dev/null && [ -z "$force_pacman" ]; then
     echo "󰣇 Updating Paru..."
     paru --color "$color" -Syu
     paru -Qdt > /dev/null &&

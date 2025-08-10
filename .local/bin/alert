@@ -2,15 +2,9 @@
 
 while getopts "f:n:i:h" arg; do
     case $arg in
-    f)
-        sound_file="$OPTARG"
-        ;;
-    n)
-        notify_title="$OPTARG"
-        ;;
-    i)
-        notify_icon_path="$OPTARG"
-        ;;
+    f) sound_file="$OPTARG" ;;
+    n) notify_title="$OPTARG" ;;
+    i) notify_icon_path="$OPTARG" ;;
     *)
         echo "Usage: $(basename $0) [OPTIONS] [MESSAGE]"
         printf "\nArguments:\n"
@@ -40,7 +34,7 @@ function notify {
     "$notify_title" "$message"
 }
 
-[ -z "$@" ] && message="Alert!" || message="$@"
-[ -z "$sound_file" ] || sound &
-[ -z "$notify_title" ] || notify &
+[ -n "$*" ] && message="$*" || message="Alert!"
+[ -n "$sound_file" ] && sound &
+[ -n "$notify_title" ] && notify &
 echo "$message"

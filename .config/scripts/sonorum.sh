@@ -67,11 +67,11 @@ else
 fi
 
 if [ "$1" == "up" ]; then
-  notification_volume
   wpctl set-volume -l "$LIMIT" "$SINK" "${amount}%+"
-elif [ "$1" == "down" ]; then
   notification_volume
+elif [ "$1" == "down" ]; then
   wpctl set-volume "$SINK" "${amount}%-"
+  notification_volume
 elif [ "$1" == "mute" ]; then
   wpctl set-mute "$SINK" toggle
   notification_mute

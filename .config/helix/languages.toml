@@ -39,3 +39,4 @@ auto-format = false
 [[language]]
 name = "html"
 language-servers = ["vscode-html-language-server", "emmet-lsp"]
+auto-format = false

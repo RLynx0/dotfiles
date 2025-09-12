@@ -64,8 +64,8 @@
 "type" = { fg = "green" }
 "constant" = { fg = "lb2", modifiers = ["italic"] }
 "constant.builtin" = { fg = "aqua", modifiers = ["italic"] }
-"constant.builtin.boolean" = { fg = "purple", modifiers = ["italic"] }
-"constant.numeric" = { fg = "purple" }
+"constant.builtin.boolean" = { fg = "magenta", modifiers = ["italic"] }
+"constant.numeric" = { fg = "magenta" }
 "constant.character.escape" = { fg = "green" }
 "string" = { fg = "aqua", modifiers = ["italic"] }
 "string.regexp" = { fg = "green" }
@@ -80,15 +80,15 @@
 "punctuation.bracket" = { fg = "la1" }
 "punctuation.special" = { fg = "blue" }
 "keyword" = { fg = "red" }
-"keyword.operator" = { fg = "purple" }
-"keyword.directive" = { fg = "purple" }
+"keyword.operator" = { fg = "magenta" }
+"keyword.directive" = { fg = "magenta" }
 "keyword.storage" = { fg = "red" }
 "operator" = { fg = "orange" }
 "function" = { fg = "yellow" }
 "function.macro" = { fg = "blue", modifiers = ["italic"] }
 "namespace" = { fg = "yellow", modifiers = ["italic"] }
 "tag" = { fg = "orange" }
-"attribute" = { fg = "purple", modifiers = ["italic"] }
+"attribute" = { fg = "magenta", modifiers = ["italic"] }
 "constructor" = { fg = "blue" }
 "module" = { fg = "green" }
 "special" = { fg = "red", underline = { style = "line" } }
@@ -100,14 +100,14 @@
 "markup.heading.3" = { fg = "yellow", modifiers = ["bold"] }
 "markup.heading.4" = { fg = "green", modifiers = ["bold"] }
 "markup.heading.5" = { fg = "blue", modifiers = ["bold"] }
-"markup.heading.6" = { fg = "purple", modifiers = ["bold"] }
+"markup.heading.6" = { fg = "magenta", modifiers = ["bold"] }
 "markup.list" = { fg = "red" }
 "markup.bold" = { modifiers = ["bold"] }
 "markup.italic" = { modifiers = ["italic"] }
 "markup.strikethrough" = { modifiers = ["crossed_out"] }
 "markup.link.url" = { fg = "blue", underline = { style = "line" } }
 "markup.link.label" = { fg = "orange" }
-"markup.link.text" = { fg = "purple" }
+"markup.link.text" = { fg = "magenta" }
 "markup.quote" = { fg = "la0", modifiers = ["italic"] }
 "markup.raw.inline" = { fg = "green" }
 "markup.raw.block" = { fg = "aqua", bg = "da0" }
@@ -135,7 +135,7 @@
 "green" = "#60d0a0"
 "aqua" = "#60c0c0"
 "blue" = "#50a0d0"
-"purple" = "#c080d8"
+"magenta" = "#c080d8"
 
 "orange_dark" = "#a02000"
 "green_dark" = "#306040"

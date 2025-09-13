@@ -13,14 +13,49 @@
 #                     |__/           |__/                              #
                                                                     
 
-CTX_FILE="/tmp/quick-$2-cmd.ctx.tmp"
-SET_FILE="/tmp/quick-$2-cmd.set.tmp"
-CMD_CLASS="${CMD_CLASS:-"quick-$2-cmd"}"
-WORKSPACE="${WORKSPACE:-"quick-$2-cmd"}"
 TERMINAL="${TERMINAL:-"kitty"}"
 HEIGHT="${HEIGHT:-"100%"}"
 WIDTH="${WIDTH:-"40%"}"
-DOCK="${1:-"ur"}"
+DOCK="${DOCK:-"ur"}"
+FORCE_FOCUS=''
+
+function show_help {
+  echo "Usage: $(basename $0) [OPTIONS] [COMMAND]"
+  printf "\nArguments:\n"
+  echo "  [COMMAND]  Command to execute in the terminal."
+  printf "\nOptions:\n"
+  echo "  -H <HEIGHT>     Height of the window. Either N pixels or P% percentage.        Default: 100%"
+  echo "  -W <WIDTH>      Width of the window. Either N pixels or P% percentage.         Default: 40%"
+  echo "  -c <CMD_CLASS>  Window class name used to identify the terminal.               Default: quick-<COMMAND>-cmd"
+  echo "  -w <WORKSPACE>  Name of the special workspace the terminal will be opened in.  Default: quick-<COMMAND>-cmd"
+  echo "  -t <TERMINAL>   Use a specific terminal.                                       Default: kitty"
+  echo "  -d <DOCK>       List of characters used to dock the terminal.                  Default: ur"
+  echo "  -f              Force focusing the window, even if it's already focused."
+  echo "  -r              Restore previous HEIGHT, WIDTH and DOCK."
+  echo "  -h              Print this help message and exit."
+}
+
+while getopts "H:W:c:w:t:d:frh" arg; do
+    case $arg in
+    H) HEIGHT="$OPTARG" ;;
+    W) WIDTH="$OPTARG" ;;
+    c) CMD_CLASS="$OPTARG" ;;
+    w) WORKSPACE="$OPTARG" ;;
+    t) TERMINAL="$OPTARG" ;;
+    d) DOCK="$OPTARG" ;;
+    f) FORCE_FOCUS='1' ;;
+    h) show_help; exit ;;
+    *)
+      echo "Use the -h flag for usage." >&2
+      exit 1
+    esac
+done
+shift $(($OPTIND-1))
+
+CTX_FILE="/tmp/quick-$1-cmd.ctx.tmp"
+SET_FILE="/tmp/quick-$1-cmd.set.tmp"
+CMD_CLASS="${CMD_CLASS:-"quick-$1-cmd"}"
+WORKSPACE="${WORKSPACE:-"quick-$1-cmd"}"
 
 function check_command {
   command -v "$1" &>/dev/null || {
@@ -29,7 +64,7 @@ function check_command {
   }
 }
 
-[ -z "$2" ] || check_command "$2"
+[ -z "$1" ] || check_command "$1"
 check_command "$TERMINAL"
 check_command hyprctl
 
@@ -122,7 +157,7 @@ function setup {
   save_setup
 }
 
-already_open || open_cmd "$2" > /dev/null
-toggle_view                   > /dev/null
-focused && setup              > /dev/null
+already_open || open_cmd "$1"                   > /dev/null
+focused && [ -n "$FORCE_FOCUS" ] || toggle_view > /dev/null
+focused && setup                                > /dev/null
 exit 0

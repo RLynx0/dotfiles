@@ -22,7 +22,7 @@ HEIGHT="${HEIGHT:-"$DEFAULT_HEIGHT"}"
 WIDTH="${WIDTH:-"$DEFAULT_WIDTH"}"
 DOCK="${DOCK:-"$DEFAULT_DOCK"}"
 C_IND_H=0; C_IND_W=0; C_IND_D=0
-FORCE_FOCUS=''
+CLEAN_RESTORE=''; FORCE_FOCUS=''
 
 function show_help {
   echo "Open, toggle and position a terminal window in a special hyprland workspace."
@@ -58,7 +58,7 @@ while getopts "H:W:d:c:w:t:frh" arg; do
     w) WORKSPACE="$OPTARG" ;;
     t) TERMINAL="$OPTARG" ;;
     f) FORCE_FOCUS='1' ;;
-    r) HEIGHT='$'; WIDTH='$'; DOCK='$' ;;
+    r) HEIGHT='$'; WIDTH='$'; DOCK='$'; CLEAN_RESTORE='1' ;;
     h) show_help; exit ;;
     *)
       echo "Use the -h flag for usage." >&2
@@ -133,6 +133,11 @@ function resolve_hwd {
   set $(resolve_val "$HEIGHT" "$DEFAULT_HEIGHT" "$h" "$ih" "$lh"); HEIGHT="$1"; C_IND_H="$2"
   set $(resolve_val "$WIDTH"  "$DEFAULT_WIDTH"  "$w" "$iw" "$lw"); WIDTH="$1";  C_IND_W="$2"
   set $(resolve_val "$DOCK"   "$DEFAULT_DOCK"   "$d" "$id" "$ld"); DOCK="$1";   C_IND_D="$2"
+  if [ -n "$CLEAN_RESTORE" ]; then
+    LITERAL_H="$lh"; C_IND_H="$ih"
+    LITERAL_W="$lw"; C_IND_W="$iw"
+    LITERAL_D="$ld"; C_IND_D="$id"
+  fi
 }
 
 function unchanged {

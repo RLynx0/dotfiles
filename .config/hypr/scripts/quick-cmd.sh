@@ -90,7 +90,7 @@ BORDER="$(hyprctl getoption general:border_size | head -1 | awk '{ print $2 }')"
 GAPS=($(hyprctl getoption general:gaps_out | head -1 | awk -F ': ' '{ print $2 }'))
 GAP_T="${GAPS[0]}"; GAP_R="${GAPS[1]}";
 GAP_B="${GAPS[2]}"; GAP_L="${GAPS[3]}";
-OFF_Y="$(echo "($GAP_T - $GAP_B) / 2" | bc)"
+OFF_Y="$(((GAP_T - GAP_B) / 2))"
 
 function pos {
   hyprctl activewindow \
@@ -102,8 +102,8 @@ function probe_reserved {
   hyprctl dispatch centerwindow 0 > /dev/null; p0=($(pos))
   hyprctl dispatch centerwindow 1 > /dev/null; p1=($(pos))
   x0="${p0[0]}"; y0="${p0[1]}"; x1="${p1[0]}"; y1="${p1[1]}"
-  ox="$(echo "2 * ($x1 - $x0 + $BORDER) + $GAP_L + $GAP_R" | bc)"
-  oy="$(echo "2 * ($y1 - $y0 + $BORDER) + $GAP_T + $GAP_B" | bc)"
+  ox="$((2 * (x1 - x0 + BORDER) + GAP_L + GAP_R))"
+  oy="$((2 * (y1 - y0 + BORDER) + GAP_T + GAP_B))"
   echo "-$ox -$oy"
 }
 

@@ -13,37 +13,52 @@
 #                     |__/           |__/                              #
                                                                     
 
+DEFAULT_HEIGHT='100%'
+DEFAULT_WIDTH='40%'
+DEFAULT_DOCK='ur'
+
 TERMINAL="${TERMINAL:-"kitty"}"
-HEIGHT="${HEIGHT:-"100%"}"
-WIDTH="${WIDTH:-"40%"}"
-DOCK="${DOCK:-"ur"}"
+HEIGHT="${HEIGHT:-"$DEFAULT_HEIGHT"}"
+WIDTH="${WIDTH:-"$DEFAULT_WIDTH"}"
+DOCK="${DOCK:-"$DEFAULT_DOCK"}"
+C_IND_H=0; C_IND_W=0; C_IND_D=0
 FORCE_FOCUS=''
 
 function show_help {
-  echo "Usage: $(basename $0) [OPTIONS] [COMMAND]"
+  echo "Open, toggle and position a terminal window in a special hyprland workspace."
+  printf "\nUsage: $(basename $0) [OPTIONS] [COMMAND]\n"
   printf "\nArguments:\n"
   echo "  [COMMAND]  Command to execute in the terminal."
   printf "\nOptions:\n"
-  echo "  -H <HEIGHT>     Height of the window. Either N pixels or P% percentage.        Default: 100%"
-  echo "  -W <WIDTH>      Width of the window. Either N pixels or P% percentage.         Default: 40%"
-  echo "  -c <CMD_CLASS>  Window class name used to identify the terminal.               Default: quick-<COMMAND>-cmd"
-  echo "  -w <WORKSPACE>  Name of the special workspace the terminal will be opened in.  Default: quick-<COMMAND>-cmd"
+  echo "  -H <HEIGHT>     Height of the window. Either N pixels or P% percentage.        Default: $DEFAULT_HEIGHT"
+  echo "  -W <WIDTH>      Width of the window. Either N pixels or P% percentage.         Default: $DEFAULT_WIDTH"
+  echo "  -d <DOCK>       List of characters used to dock the terminal.                  Default: $DEFAULT_DOCK"
+  echo "  -c <CMD_CLASS>  Window class name used to identify the terminal.               Default: quick-<COMMAND>-<TERMINAL>"
+  echo "  -w <WORKSPACE>  Name of the special workspace the terminal will be opened in.  Default: quick-<COMMAND>-<TERMINAL>"
   echo "  -t <TERMINAL>   Use a specific terminal.                                       Default: kitty"
-  echo "  -d <DOCK>       List of characters used to dock the terminal.                  Default: ur"
   echo "  -f              Force focusing the window, even if it's already focused."
   echo "  -r              Restore previous HEIGHT, WIDTH and DOCK."
   echo "  -h              Print this help message and exit."
+  printf "\nNotes:\n"
+  echo "  HEIGHT, WIDTH and DOCK support special syntax."
+  echo "  Setting their value to '$' will restore the previously used value."
+  echo "  If this is not found, the value will fall back to its respective default."
+  echo "  You can also pass these options multiple values delimited with ','."
+  echo "  The script will cycle through these values on each execution."
+  echo "  Finally, '-' is a shorthand for the default value."
+  echo "  This may be useful when using the cycle feature."
 }
 
-while getopts "H:W:c:w:t:d:frh" arg; do
+while getopts "H:W:d:c:w:t:frh" arg; do
     case $arg in
-    H) HEIGHT="$OPTARG" ;;
-    W) WIDTH="$OPTARG" ;;
+    H) HEIGHT="$(tr -d ' ' <<<"$OPTARG")" ;;
+    W) WIDTH="$(tr -d ' ' <<<"$OPTARG")" ;;
+    d) DOCK="$(tr -d ' ' <<<"$OPTARG")" ;;
     c) CMD_CLASS="$OPTARG" ;;
     w) WORKSPACE="$OPTARG" ;;
     t) TERMINAL="$OPTARG" ;;
-    d) DOCK="$OPTARG" ;;
     f) FORCE_FOCUS='1' ;;
+    r) HEIGHT='$'; WIDTH='$'; DOCK='$' ;;
     h) show_help; exit ;;
     *)
       echo "Use the -h flag for usage." >&2
@@ -52,10 +67,13 @@ while getopts "H:W:c:w:t:d:frh" arg; do
 done
 shift $(($OPTIND-1))
 
-CTX_FILE="/tmp/quick-$1-cmd.ctx.tmp"
-SET_FILE="/tmp/quick-$1-cmd.set.tmp"
-CMD_CLASS="${CMD_CLASS:-"quick-$1-cmd"}"
-WORKSPACE="${WORKSPACE:-"quick-$1-cmd"}"
+CTX_FILE="/tmp/quick-$1-$TERMINAL.ctx.tmp"
+SET_FILE="/tmp/quick-$1-$TERMINAL.set.tmp"
+CMD_CLASS="${CMD_CLASS:-"quick-$1-$TERMINAL"}"
+WORKSPACE="${WORKSPACE:-"quick-$1-$TERMINAL"}"
+LITERAL_H="$HEIGHT"
+LITERAL_W="$WIDTH"
+LITERAL_D="$DOCK"
 
 function check_command {
   command -v "$1" &>/dev/null || {
@@ -89,15 +107,45 @@ function probe_reserved {
   echo "-$ox -$oy"
 }
 
+function resolve_val {
+  local target="$1"
+  local default="$2"
+  local index=0
+  local -a values
+  IFS=',' read -ra values <<< "$target"
+  local n_vals="${#values[@]}"
+  local last_val="${3:-"$default"}"
+  local last_index="${4:-"$n_vals"}"
+  local last_literal="$5"
+  [ "$target" == "$last_literal" ] \
+  && index="$(((last_index + 1) % n_vals))"
+  target="${values["$index"]}"
+  [ "$target" == '-' ] && target="$default"
+  [ "$target" == '$' ] && target="$last_val"
+  echo "$target $index"
+}
+
+function resolve_hwd {
+  set $(awk '{ print $3,$4,$5,$7,$8,$9,$10,$11,$12 }' "$CTX_FILE" 2> /dev/null)
+  local h="$1";  local w="$2";  local d="$3"
+  local ih="$4"; local iw="$5"; local id="$6"
+  local lh="$7"; local lw="$8"; local ld="$9"
+  set $(resolve_val "$HEIGHT" "$DEFAULT_HEIGHT" "$h" "$ih" "$lh"); HEIGHT="$1"; C_IND_H="$2"
+  set $(resolve_val "$WIDTH"  "$DEFAULT_WIDTH"  "$w" "$iw" "$lw"); WIDTH="$1";  C_IND_W="$2"
+  set $(resolve_val "$DOCK"   "$DEFAULT_DOCK"   "$d" "$id" "$ld"); DOCK="$1";   C_IND_D="$2"
+}
+
 function unchanged {
-  p="$(cat "$CTX_FILE")"
-  g="$(echo ${GAPS[@]} | tr " " ",")"
-  c="$(hyprctl monitors \
-  | awk -v c="$WIDTH $HEIGHT $DOCK $g" '
+  local p="$(awk '{ print $1,$2,$3,$4,$5,$6 }' "$CTX_FILE" 2> /dev/null)"
+  local g="$(echo ${GAPS[@]} | tr " " ",")"
+  local c="$(hyprctl monitors \
+  | awk -v c="$HEIGHT $WIDTH $DOCK $g" '
     /^Monitor/ { m = $2 }
     /^\s*scale:/ { s = $2 }
-    /^\s*focused: yes/ { print m,s,c }
-  ' | tee "$CTX_FILE")"
+    /^\s*focused: yes/ { print m,s,c }')"
+  local c_inds="$C_IND_H $C_IND_W $C_IND_D"
+  local literals="$LITERAL_H $LITERAL_W $LITERAL_D"
+  echo "$c $c_inds $literals" > "$CTX_FILE"
   [ "$c" == "$p" ]
 }
 
@@ -145,7 +193,7 @@ function dock {
 
 function setup {
   in_ws || hyprctl dispatch movetoworkspace "special:$WORKSPACE"
-  unchanged && sh "$SET_FILE" && return
+  resolve_hwd && unchanged && sh "$SET_FILE" && return
   hyprctl dispatch setfloating
   hyprctl dispatch resizeactive "exact $WIDTH $HEIGHT"
   hyprctl dispatch resizeactive -- "$(probe_reserved)"

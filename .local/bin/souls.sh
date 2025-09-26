@@ -143,16 +143,16 @@ function dog_stand {
   local Z='\033[49m' # Default Background
   local D='\033[30m' # Black Foreground
   local W='\033[47m' # White Background
-  printf "         $D▄$W▀$Z▄$W▀▀▀▀$Z▄$W▀$Z▄ \n"
-  printf "        ▄$W▀        █$Z \n"
-  printf "▄$W▀$Z▄  ▄▄$W▀▀    ▀  ▀  █$Z\n"
-  printf "█$W ▀▀▀       ▄ ▀█ ▄ █$Z\n"
-  printf "█$W            ▀▀▀▀  █$Z\n"
+  printf "          $D▄ ▄▄▄▄ ▄  \n"
+  printf "         █$W ▀    ▀ █$Z \n"
+  printf " ▄     ▄█$W    ▄  ▄ ▀$Z▄\n"
+  printf "█$W █$Z▄▄$W▀▀       ▄▄   █$Z\n"
+  printf "█$W           ▀▄▄█▄▀ █$Z\n"
   printf "█$W                  █$Z\n"
-  printf "▀$W▄                 █$Z\n"
-  printf " █$W  ▄▄  ▄▄▄▄  ▄▄  █$Z \n"
-  printf " ▀$W▄ █$Z▀$W▄ █$Z  ▀$W▄ █$Z▀$W▄ █$Z \n"
-  printf "   ▀   ▀     ▀   ▀  $RESET\n"
+  printf "█$W                  █$Z\n"
+  printf " █$W                ▄$Z▀\n"
+  printf " █$W  ██  █$Z▀▀█$W  ██  █$Z \n"
+  printf "  ▀$W▄$Z▀ ▀$W▄$Z▀   ▀$W▄$Z▀ ▀$W▄$Z▀ $RESET\n"
 }
 
 function dog_sleep {

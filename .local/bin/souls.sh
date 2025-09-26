@@ -1,6 +1,7 @@
 #!/bin/bash
 
 default_theme="darklynx"
+RESET='\033[0m'
 
 function load_theme_simple {
   R='\033[38;2;255;0;0m'
@@ -100,7 +101,7 @@ function small {
   printf "$Y▀█▀     $R▀█▀     $B▀█▀\n"
   printf "                   \n"
   printf "    $G▄ ▄     $C▄ ▄    \n"
-  printf "    $G▀█▀     $C▀█▀    \n"
+  printf "    $G▀█▀     $C▀█▀    $RESET\n"
 }
 
 function medium {
@@ -116,7 +117,7 @@ function medium {
   printf "                               \n"
   printf "      $G▄██▄██▄     $C▄██▄██▄      \n"
   printf "      $G▀█████▀     $C▀█████▀      \n"
-  printf "      $G  ▀█▀       $C  ▀█▀        \n"
+  printf "      $G  ▀█▀       $C  ▀█▀        $RESET\n"
 }
 
 function large {
@@ -135,7 +136,47 @@ function large {
   printf "       $G████▄████     $C████▄████       \n"
   printf "       $G█████████     $C█████████       \n"
   printf "       $G ▀█████▀      $C ▀█████▀        \n"
-  printf "       $G   ▀█▀        $C   ▀█▀          \n"
+  printf "       $G   ▀█▀        $C   ▀█▀          $RESET\n"
+}
+
+function dog_stand {
+  local Z='\033[49m' # Default Background
+  local D='\033[30m' # Black Foreground
+  local W='\033[47m' # White Background
+  printf "         $D▄$W▀$Z▄$W▀▀▀▀$Z▄$W▀$Z▄ \n"
+  printf "        ▄$W▀        █$Z \n"
+  printf "▄$W▀$Z▄  ▄▄$W▀▀    ▀  ▀  █$Z\n"
+  printf "█$W ▀▀▀       ▄ ▀█ ▄ █$Z\n"
+  printf "█$W            ▀▀▀▀  █$Z\n"
+  printf "█$W                  █$Z\n"
+  printf "▀$W▄                 █$Z\n"
+  printf " █$W  ▄▄  ▄▄▄▄  ▄▄  █$Z \n"
+  printf " ▀$W▄ █$Z▀$W▄ █$Z  ▀$W▄ █$Z▀$W▄ █$Z \n"
+  printf "   ▀   ▀     ▀   ▀  $RESET\n"
+}
+
+function dog_sleep {
+  local Z='\033[49m' # Default Background
+  local D='\033[30m' # Black Foreground
+  local W='\033[47m' # White Background
+  printf "    $D▄▄▄▄▄▄$W▀▀▀▀▀▀▀$Z▄▄▄      \n"
+  printf "  ▄$W▀                ▀▀$Z▄   \n"
+  printf " █$W     █  ▀▄           █$Z  \n"
+  printf "█$W▀     ▄ █▀█   █▄      █$Z  \n"
+  printf " █$W▄    ▀  ▄▀  ▄▄█      ▀$Z▄ \n"
+  printf " █$W▄▄▄▄▄▄▄▄▄▄▄▄▄▄█▄▄▄▄▄█▄▄█$RESET\n"
+}
+
+function dog_rand {
+  case "$((RANDOM % 3))" in
+    0|1) dog_stand ;;
+    2)   dog_sleep ;;
+  esac
+}
+
+function maybe_dog {
+  rand="$((RANDOM % 50))"
+  [ "$rand" -eq 0 ] && dog_rand
 }
 
 
@@ -230,13 +271,15 @@ fi
   && exit
 
 if [ "$1" == "tiny" -o "$1" == "t" ]; then
-  tiny
+  maybe_dog || tiny
 elif [ "$1" == "small" -o "$1" == "s" ]; then
-  small
+  maybe_dog || small
 elif [ "$1" == "medium" -o "$1" == "m" ]; then
-  medium
+  maybe_dog || medium
 elif [ "$1" == "large" -o "$1" == "l" ]; then
-  large
+  maybe_dog || large
+elif [ "$1" == "dog" -o "$1" == "d" ]; then
+  dog_rand
 else
   print_usage >&2
   exit 1

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 WAYPAPER_HOME="${XDG_CONFIG_HOME:-"$HOME/.config"}/waypaper"
 CURRENT="$WAYPAPER_HOME/current_wallpaper"

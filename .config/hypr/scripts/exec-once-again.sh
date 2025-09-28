@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 HYPRLAND_CONFIG="${XDG_CONFIG_HOME:-"$HOME/.config"}/hypr/hyprland.conf"
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 P_COPY="📋 Copy clipboard entry 📋"
 P_DEL="🧨 Delete clipboard entry 🧨"

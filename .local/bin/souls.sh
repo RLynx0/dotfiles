@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 default_theme="darklynx"
 RESET='\033[0m'

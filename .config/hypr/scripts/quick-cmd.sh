@@ -67,8 +67,9 @@ while getopts "H:W:d:c:w:t:frh" arg; do
 done
 shift $(($OPTIND-1))
 
-CTX_FILE="/tmp/quick-$1-$TERMINAL.ctx.tmp"
-SET_FILE="/tmp/quick-$1-$TERMINAL.set.tmp"
+CACHE_DIR="${XDG_CACHE_HOME:-"$HOME/.cache"}/quick-cmd"
+CTX_FILE="$CACHE_DIR/quick-$1-$TERMINAL.ctx.tmp"
+SET_FILE="$CACHE_DIR/quick-$1-$TERMINAL.set.tmp"
 CMD_CLASS="${CMD_CLASS:-"quick-$1-$TERMINAL"}"
 WORKSPACE="${WORKSPACE:-"quick-$1-$TERMINAL"}"
 LITERAL_H="$HEIGHT"
@@ -197,6 +198,7 @@ function dock {
 }
 
 function setup {
+  [ -d "$CACHE_DIR" ] || mkdir -p "$CACHE_DIR"
   in_ws || hyprctl dispatch movetoworkspace "special:$WORKSPACE"
   resolve_hwd && unchanged && sh "$SET_FILE" && return
   hyprctl dispatch setfloating

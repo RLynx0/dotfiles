@@ -68,8 +68,8 @@ done
 shift $(($OPTIND-1))
 
 CACHE_DIR="${XDG_CACHE_HOME:-"$HOME/.cache"}/quick-cmd"
-CTX_FILE="$CACHE_DIR/quick-$1-$TERMINAL.ctx.tmp"
-SET_FILE="$CACHE_DIR/quick-$1-$TERMINAL.set.tmp"
+CTX_FILE="$CACHE_DIR/quick-$1-$TERMINAL.ctx"
+SET_FILE="$CACHE_DIR/quick-$1-$TERMINAL.set"
 CMD_CLASS="${CMD_CLASS:-"quick-$1-$TERMINAL"}"
 WORKSPACE="${WORKSPACE:-"quick-$1-$TERMINAL"}"
 LITERAL_H="$HEIGHT"

@@ -135,9 +135,9 @@ function resolve_hwd {
   set $(resolve_val "$WIDTH"  "$DEFAULT_WIDTH"  "$w" "$iw" "$lw"); WIDTH="$1";  C_IND_W="$2"
   set $(resolve_val "$DOCK"   "$DEFAULT_DOCK"   "$d" "$id" "$ld"); DOCK="$1";   C_IND_D="$2"
   if [ -n "$CLEAN_RESTORE" ]; then
-    LITERAL_H="$lh"; C_IND_H="$ih"
-    LITERAL_W="$lw"; C_IND_W="$iw"
-    LITERAL_D="$ld"; C_IND_D="$id"
+  C_IND_D="${id:-0}"; LITERAL_H="${lh:-"$HEIGHT"}"
+  C_IND_H="${ih:-0}"; LITERAL_W="${lw:-"$WIDTH"}"
+  C_IND_W="${iw:-0}"; LITERAL_D="${ld:-"$DOCK"}"
   fi
 }
 

@@ -69,24 +69,26 @@ fi
 if command -v yay > /dev/null && [ -z "$force_pacman" ]; then
     echo "󰣇 Updating Yay..."
     yay --color "$color" -Syu
-    yay -Qdtq > /dev/null &&
-    yay --color "$color" -Rnsc "$(yay -Qdtq)"
+    yay -Qdtq > /dev/null \
+    && yay --color "$color" -Rnsc $(yay -Qdtq)
+    yay -Sc
     skip_pacman=1
     print_separator
 fi
 if command -v paru > /dev/null && [ -z "$force_pacman" ]; then
     echo "󰣇 Updating Paru..."
     paru --color "$color" -Syu
-    paru -Qdtq > /dev/null &&
-    paru --color "$color" -Rnsc "$(paru -Qdtq)"
+    paru -Qdtq > /dev/null \
+    && paru --color "$color" -Rnsc $(paru -Qdtq)
+    paru -Sc
     skip_pacman=1
     print_separator
 fi
 if command -v pacman > /dev/null && [ -z "$skip_pacman" ]; then
     echo "󰣇 Updating Pacman..."
     sudo pacman --color "$color" -Syu
-    pacman -Qdtq > /dev/null &&
-    sudo pacman --color "$color" -Rnsc "$(pacman -Qdtq)"
+    pacman -Qdtq > /dev/null \
+    && sudo pacman --color "$color" -Rnsc $(pacman -Qdtq)
     print_separator
 fi
 

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Strudel Repl
+Comment=Open Strudel Repl in Browser
+Exec=sh -c '$HOME/.config/scripts/librewolf-workspace.sh https://www.strudel.cc'
+Icon=strudel_icon
+Terminal=false
+Type=Application
+Categories=AudioVideo;Audio;AudioEditing;

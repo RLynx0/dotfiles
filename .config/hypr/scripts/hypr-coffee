@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+declare self="$(basename $0)"
+declare workdir="$HOME/.local/share/$self"
+declare pidfile="$workdir/pid"
+mkdir -p "$workdir"
+
+function clean-exit {
+  [ -f "$pidfile" ] && rm "$pidfile"
+  echo 'Cleaned up pid-file' >&2
+  exit 0
+}
+
+function stop {
+  hyprctl dispatch exec hypridle > /dev/null
+  notify-send -a "$self" "$self" 'Running low on caffeine\nRestarted hypridle'
+  echo 'Restarted hypridle' >&2
+  clean-exit
+}
+
+if [ -f "$pidfile" ]; then
+  pid="$(cat "$pidfile")"
+  kill "$pid"
+  echo "Killed previous $self instance" >&2
+  stop
+fi
+
+echo "$$" > "$pidfile"
+pkill -x hypridle
+trap clean-exit SIGINT SIGTERM
+notify-send -a "$self" "$self" 'Coffee consumed\nSystem wide awake'
+echo 'Stopped hypridle' >&2
+echo 'Waiting for hyprlock' >&2
+while inotifywait -e open /proc 2> /dev/null > /dev/null; do
+  pidof hyprlock > /dev/null && stop
+done

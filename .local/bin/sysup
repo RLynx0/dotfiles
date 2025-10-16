@@ -44,12 +44,13 @@ print_separator() {
 }
 
 # Debian
+[ -n "$auto_confirm" ] && yflag='-y'
 if command -v apt > /dev/null; then
     echo " Updating Apt..."
-    sudo apt update
-    sudo apt dist-upgrade
-    sudo apt full-upgrade
-    sudo apt autopurge
+    sudo apt $yflag update
+    sudo apt $yflag dist-upgrade
+    sudo apt $yflag full-upgrade
+    sudo apt $yflag autopurge
     print_separator
 fi
 if command -v snap > /dev/null; then
@@ -59,11 +60,12 @@ if command -v snap > /dev/null; then
 fi
 
 # RedHat
+[ -n "$auto_confirm" ] && yflag='--assumeyes'
 if command -v dnf > /dev/null; then
     echo "󱄛 Updating Dnf..."
-    sudo dnf distro-sync
-    sudo dnf upgrade
-    sudo dnf autoremove
+    sudo dnf $yflag distro-sync
+    sudo dnf $yflag upgrade
+    sudo dnf $yflag autoremove
     print_separator
 fi
 
@@ -72,8 +74,8 @@ fi
 if command -v yay > /dev/null && [ -z "$force_pacman" ]; then
     echo "󰣇 Updating Yay..."
     yay $yflag --color "$color" -Syu
-    yay -Qdtq > /dev/null \
-    && yay $yflag --color "$color" -Rnsc $(yay -Qdtq)
+    orphaned="$(yay -Qdtq)" \
+    && yay $yflag --color "$color" -Rnsc $orphaned
     yay $yflag --color "$color" -Sc
     skip_pacman=1
     print_separator
@@ -81,8 +83,8 @@ fi
 if command -v paru > /dev/null && [ -z "$force_pacman" ]; then
     echo "󰣇 Updating Paru..."
     paru $yflag --color "$color" -Syu
-    paru -Qdtq > /dev/null \
-    && paru $yflag --color "$color" -Rnsc $(paru -Qdtq)
+    orphaned="$(paru -Qdtq)" \
+    && paru $yflag --color "$color" -Rnsc $orphaned
     paru $yflag --color "$color" -Sc
     skip_pacman=1
     print_separator
@@ -90,8 +92,8 @@ fi
 if command -v pacman > /dev/null && [ -z "$skip_pacman" ]; then
     echo "󰣇 Updating Pacman..."
     sudo pacman $yflag --color "$color" -Syu
-    pacman -Qdtq > /dev/null \
-    && sudo pacman $yflag --color "$color" -Rnsc $(pacman -Qdtq)
+    orphaned="$(pacman -Qdtq)" \
+    && sudo pacman $yflag --color "$color" -Rnsc $orphaned
     print_separator
 fi
 

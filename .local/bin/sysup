@@ -39,13 +39,16 @@ done
 shift $(($OPTIND-1))
 
 
+command_q() {
+    command -v "$1" > /dev/null
+}
 print_separator() {
     printf "%s\n\n" "---"
 }
 
 # Debian
 [ -n "$auto_confirm" ] && yflag='-y'
-if command -v apt > /dev/null; then
+if command_q apt; then
     echo " Updating Apt..."
     sudo apt $yflag update
     sudo apt $yflag dist-upgrade
@@ -53,7 +56,7 @@ if command -v apt > /dev/null; then
     sudo apt $yflag autopurge
     print_separator
 fi
-if command -v snap > /dev/null; then
+if command_q snap; then
     echo " Refreshing Snap..."
     sudo snap refresh
     print_separator
@@ -61,7 +64,7 @@ fi
 
 # RedHat
 [ -n "$auto_confirm" ] && yflag='--assumeyes'
-if command -v dnf > /dev/null; then
+if command_q dnf; then
     echo "󱄛 Updating Dnf..."
     sudo dnf $yflag distro-sync
     sudo dnf $yflag upgrade
@@ -71,7 +74,7 @@ fi
 
 # Arch
 [ -n "$auto_confirm" ] && yflag='--noconfirm'
-if command -v yay > /dev/null && [ -z "$force_pacman" ]; then
+if command_q yay && [ -z "$force_pacman" ]; then
     echo "󰣇 Updating Yay..."
     yay $yflag --color "$color" -Syu
     orphaned="$(yay -Qdtq)" \
@@ -80,7 +83,7 @@ if command -v yay > /dev/null && [ -z "$force_pacman" ]; then
     skip_pacman=1
     print_separator
 fi
-if command -v paru > /dev/null && [ -z "$force_pacman" ]; then
+if command_q paru && [ -z "$force_pacman" ]; then
     echo "󰣇 Updating Paru..."
     paru $yflag --color "$color" -Syu
     orphaned="$(paru -Qdtq)" \
@@ -89,31 +92,36 @@ if command -v paru > /dev/null && [ -z "$force_pacman" ]; then
     skip_pacman=1
     print_separator
 fi
-if command -v pacman > /dev/null && [ -z "$skip_pacman" ]; then
+if command_q pacman && [ -z "$skip_pacman" ]; then
     echo "󰣇 Updating Pacman..."
     sudo pacman $yflag --color "$color" -Syu
     orphaned="$(pacman -Qdtq)" \
     && sudo pacman $yflag --color "$color" -Rnsc $orphaned
     print_separator
 fi
+if command_q paccache && [ -z "$skip_pacman" ]; then
+    echo "󰣇 Pruning with Paccache..."
+    sudo paccache -r
+    print_separator
+fi
 
 # Flatpak
 [ -n "$auto_confirm" ] && yflag='--assumeyes'
-if command -v flatpak > /dev/null; then
+if command_q flatpak; then
     echo " Updating Flatpak..."
     flatpak $yflag update
     print_separator
 fi
 
 # Rust
-if command -v rustup > /dev/null; then
+if command_q rustup; then
     echo "🦀 Updating Rust..."
     rustup update
     print_separator
 fi
 
 # Haskell
-if command -v ghcup > /dev/null; then
+if command_q ghcup; then
     echo " Updating Haskell..."
     ghcup upgrade 2>&1 \
     | tee /dev/stderr \
@@ -126,7 +134,7 @@ if command -v ghcup > /dev/null; then
 fi
 
 # Locate
-if command -v updatedb > /dev/null; then
+if command_q updatedb; then
     echo "Updating Database..."
     sudo updatedb --verbose \
     | awk -v c="$(tput cols)" '
@@ -140,7 +148,7 @@ if command -v updatedb > /dev/null; then
     print_separator
 fi
 
-command -v alert > /dev/null \
+command_q alert \
 && [ "$alert_sound" != "" ] \
 && alert -f "$alert_sound" -n "$(basename "$0")" -i "$alert_icon" 'Done!' \
 || echo 'Done!'

@@ -11,6 +11,7 @@ set -x DOCKER_CONFIG "$XDG_CONFIG_HOME/docker"
 set -x DOTNET_CLI_HOME "$XDG_DATA_HOME/dotnet"
 set -x GHCUP_USE_XDG_DIRS true
 set -x GNUPGHOME "$XDG_CONFIG_HOME/gnupg"
+set -x GOPATH "$HOME/Personal/Programming/go"
 set -x GRADLE_USER_HOME "$XDG_DATA_HOME/gradle"
 set -x GTK2_RC_FILES "$XDG_CONFIG_HOME/gtk-2.0/gtkrc-2.0"
 set -x HISTFILE "$XDG_STATE_HOME/bash/history"
@@ -64,7 +65,7 @@ set alert_image "$HOME/Personal/Pictures/renders/SuperSaiyanMartletSmol.gif"
 # ALIASES >:3
 command -vq helix && alias hx='helix'
 command -vq hx && alias helix='hx'
-alias bg-sysup="yes '' | sysup -cpa $notification -i $alert_image | tee"
+alias bg-sysup="sysup -cypa $notification -i $alert_image"
 alias rank-cmd='history | awk \'/^\w/{print $1}\' | sort | uniq -c | sort -rn'
 alias whats-my-motherfucking-name='whoami'
 # overrides

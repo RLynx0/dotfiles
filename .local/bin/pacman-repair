@@ -5,9 +5,28 @@ sudo -v
 echo '==> Removing leftover install files'
 sudo find /var/cache/pacman/pkg/ -mindepth 1 -maxdepth 1 -type d -name 'download-*' -exec rm -rf {} +
 
+declare in
+
+echo '==> Checking for pacman database lock'
+if stat '/var/lib/pacman/db.lck' > /dev/null 2> /dev/null; then
+  pidof pacman > /dev/null \
+  && echo 'Pacman is currently in use. Try again later.' >&2 \
+  && exit 1
+  printf '::> Do you want to remove /var/lib/pacman/db.lck? [y/N]: ' && read in
+  case "${in,,}" in
+    'y'|'yes') sudo rm /var/lib/pacman/db.lck ;;
+    *) echo '==> Following operations may fail.' ;;
+  esac
+fi
+
+function query {
+  local flg="$1"
+  sudo pacman $flg 2> /dev/null | grep -v ' 0 missing files' | awk -F ': ' '{ print $1 }'
+}
+
 echo '==> Querying for missing files'
-declare exp="$(sudo pacman -Qke 2> /dev/null | grep -v ' 0 missing files' | awk -F ': ' '{ print $1 }')"
-declare dep="$(sudo pacman -Qkd 2> /dev/null | grep -v ' 0 missing files' | awk -F ': ' '{ print $1 }')"
+declare exp="$(query -Qke)"
+declare dep="$(query -Qkd)"
 
 [ -z "$exp" ] && [ -z "$dep" ] \
 && echo '==> No issues found. :)' \
@@ -29,9 +48,8 @@ function reinstall {
   local pak="$2"
   local flg="$3"
   local dsc="$4"
-
-  local in
   local pl
+  in=''
 
   local n="$(echo "$pak" | wc -l)"
   [ "$n" -ne 1 ] && pl='s'
@@ -45,5 +63,13 @@ function reinstall {
   esac
 }
 
-[ -n "$dep" ] && reinstall "$inst" "$dep" '--asdeps' "dependency"
-[ -n "$exp" ] && reinstall "$inst" "$exp" '--asexplicit' "explicitly installed"
+while [ -n "$dep" ] || [ -n "$exp" ]; do
+  [ -n "$dep" ] && reinstall "$inst" "$dep" '--asdeps' "dependency"
+  [ -n "$exp" ] && reinstall "$inst" "$exp" '--asexplicit' "explicitly installed"
+  echo '==> Querying for missing files again'
+  dep="$(query -Qkd)"
+  exp="$(query -Qke)"
+done
+
+echo '==> No more issues found. :)'
+exit 0

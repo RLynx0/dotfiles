@@ -1,0 +1,49 @@
+#!/bin/env bash
+
+sudo -v
+
+echo '==> Removing leftover install files'
+sudo find /var/cache/pacman/pkg/ -mindepth 1 -maxdepth 1 -type d -name 'download-*' -exec rm -rf {} +
+
+echo '==> Querying for missing files'
+declare exp="$(sudo pacman -Qke 2> /dev/null | grep -v ' 0 missing files' | awk -F ': ' '{ print $1 }')"
+declare dep="$(sudo pacman -Qkd 2> /dev/null | grep -v ' 0 missing files' | awk -F ': ' '{ print $1 }')"
+
+[ -z "$exp" ] && [ -z "$dep" ] \
+&& echo '==> No issues found. :)' \
+&& exit 0
+
+declare inst
+for m in paru yay pacman; do
+  command -v $m > /dev/null \
+  && inst="$m" \
+  && break
+done
+
+[ -z "$inst" ] && echo "==> No package manager found (paru, yay, or pacman)" >&2 && exit 1
+echo "==> Selected '$inst' as installer for following operations"
+[ "$inst" == pacman ] && inst='sudo pacman'
+
+function reinstall {
+  local com="$1"
+  local pak="$2"
+  local flg="$3"
+  local dsc="$4"
+
+  local in
+  local pl
+
+  local n="$(echo "$pak" | wc -l)"
+  [ "$n" -ne 1 ] && pl='s'
+
+  echo "==> Reinstalling $n $dsc package$pl with missing files"
+  [ "$n" -gt 1 ] && printf '::> Do you want to be prompted for every package? [y/N]: ' && read in
+
+  case "${in,,}" in
+    'y'|'yes') for p in $pak; do $com -S $flg $p; done ;;
+    *) $com -S $flg $pak ;;
+  esac
+}
+
+[ -n "$dep" ] && reinstall "$inst" "$dep" '--asdeps' "dependency"
+[ -n "$exp" ] && reinstall "$inst" "$exp" '--asexplicit' "explicitly installed"

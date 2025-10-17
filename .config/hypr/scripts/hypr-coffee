@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 declare self="$(basename $0)"
-declare workdir="$HOME/.local/share/$self"
+declare workdir="${XDG_DATA_HOME:-"$HOME/.local/share"}/$self"
 declare pidfile="$workdir/pid"
 mkdir -p "$workdir"
 

@@ -25,7 +25,7 @@
 }
 
 window#waybar {
-  background-color: rgba(34, 36, 38, 0.8);
+  background-color: rgba(18, 20, 22, 0.6);
   transition-property: background-color;
   transition-duration: .5s;
   border-radius: 1.2em;
@@ -45,9 +45,12 @@ button:hover {
 }
 
 #workspaces {
-  background-color: rgba(18, 20, 22, 0.6);
+  background-color: rgba(18, 20, 22, 1.0);
   color: #ccc;
   border-radius: 2em;
+}
+window#waybar.empty #workspaces {
+  background-color: rgba(18, 20, 22, 0.6);
 }
 
 #workspaces button {
@@ -93,10 +96,25 @@ button:hover {
 #custom-hyprpanic,
 .group-child * {
   min-width: 1.5em;
-  background-color: rgba(18, 20, 22, 0.6);
+  background-color: rgba(18, 20, 22, 1.0);
   color: #ccc;
   padding: 0 0.5em;
   border-radius: 2em;
+  transition-property: background-color;
+  transition-duration: 0.25s;
+}
+window#waybar.empty #wireplumber,
+window#waybar.empty #bluetooth,
+window#waybar.empty #network,
+window#waybar.empty #battery,
+window#waybar.empty #clock,
+window#waybar.empty #custom-appmenu,
+window#waybar.empty #custom-updates,
+window#waybar.empty #custom-cliphist,
+window#waybar.empty #custom-exit,
+window#waybar.empty #custom-hyprpanic,
+window#waybar.empty .group-child * {
+  background-color: rgba(18, 20, 22, 0.6);
 }
 
 .group-child:not(:first-child) * {

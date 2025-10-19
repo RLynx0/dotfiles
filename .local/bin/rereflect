@@ -1,0 +1,62 @@
+#!/usr/bin/bash
+
+# ██████╗ ███████╗██████╗ ███████╗███████╗██╗     ███████╗ ██████╗████████╗ #
+# ██╔══██╗██╔════╝██╔══██╗██╔════╝██╔════╝██║     ██╔════╝██╔════╝╚══██╔══╝ #
+# ██████╔╝█████╗  ██████╔╝█████╗  █████╗  ██║     █████╗  ██║        ██║    #
+# ██╔══██╗██╔══╝  ██╔══██╗██╔══╝  ██╔══╝  ██║     ██╔══╝  ██║        ██║    #
+# ██║  ██║███████╗██║  ██║███████╗██║     ███████╗███████╗╚██████╗   ██║    #
+# ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝     ╚══════╝╚══════╝ ╚═════╝   ╚═╝    #
+#                  _           ___ _                  __                    #
+#                 | |__ _  _  | _ \ |  _  _ _ _ __ __/  \                   #
+#                 | '_ \ || | |   / |_| || | ' \\ \ / () |                  #
+#                 |_.__/\_, | |_|_\____\_, |_||_/_\_\\__/                   #
+#                       |__/           |__/                                 #
+
+
+mirrorlist="/etc/pacman.d/mirrorlist"
+
+while getopts "a:i:h" arg; do
+    case $arg in
+    a)
+        alert_file="$OPTARG"
+        ;;
+    i)
+        alert_icon="$OPTARG"
+        ;;
+    *)
+        echo "Usage: $(basename $0) [-a <Alert File>] [-i <Alert Icon>]"
+        exit 1
+    esac
+done
+shift $(($OPTIND-1))
+
+
+function complain_no_cmd {
+    echo "No command found in $mirrorlist!" 1>&2
+    echo "Expected to find a line like this:" 1>&2
+    echo "# With:       <command>" 1>&2
+    echo "---"
+    echo "Try using the reflector command before this script." 1>&2
+    return 1
+}
+
+function get_cmd {
+    awk -v r=1 -F '^# With: +' '
+        $2 { print $2; r=0 }
+        END { exit r }
+    ' "$mirrorlist" \
+    || complain_no_cmd
+}
+
+function do_alert {
+command -v alert > /dev/null &&
+    [[ "$alert_file" != "" ]] &&
+    alert -f "$alert_file" -n "$(basename $0)" -i "$alert_icon" 'Done!' ||
+    echo 'Done!'
+}
+
+
+cmd="$(get_cmd)" \
+&& echo -e "Running 'sudo ${cmd}'\n" \
+&& sudo $cmd \
+&& do_alert

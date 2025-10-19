@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 function dont {
   notify-send "Nooo don't kill yourself" "Your so sexy aha" \
   --icon "$XDG_CONFIG_HOME/scripts/essential/dont.jpg" --expire-time 5000

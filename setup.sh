@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 LMARGIN_FRAC="8"
 N="\033[K\n"

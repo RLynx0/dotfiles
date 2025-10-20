@@ -48,6 +48,8 @@ button:hover {
   background-color: rgba(18, 20, 22, 1.0);
   color: #ccc;
   border-radius: 2em;
+  transition-property: background-color;
+  transition-duration: .5s;
 }
 window#waybar.empty #workspaces {
   background-color: rgba(18, 20, 22, 0.6);

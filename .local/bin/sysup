@@ -139,9 +139,10 @@ if command_q updatedb; then
     sudo updatedb --verbose \
     | awk -v c="$(tput cols)" '
         {
-            r = substr($0, c - 3, 1)
+            gsub(/[^\x00-\x7F]/, "?")
+            rem = substr($0, c - 3, 1)
             printf "\r\033[K%s", substr($0, 0, c - 3)
-            if(r) printf "..."
+            if(rem) printf "..."
             n++
         }
         END { printf "\r\033[K%d Files\n", n }'

@@ -1,21 +1,29 @@
 #!/usr/bin/env bash
 
+function print_qry { printf '\033[034m::>\033[0m %s ' "$1"; }
+function print_inf { printf '\033[034m==>\033[0m %s\n' "$1"; }
+function print_fin { printf '\033[032m==>\033[0m %s\n' "$1"; }
+function print_err { printf '\033[031m==> ERROR:\033[0m %s\n' "$1" >&2; }
+function print_wrn { printf '\033[033m==> WARNING:\033[0m %s\n' "$1" >&2; }
+
 sudo -v
 
-echo '==> Removing leftover install files'
+print_inf 'Removing leftover install files'
 sudo find /var/cache/pacman/pkg/ -mindepth 1 -maxdepth 1 -type d -name 'download-*' -exec rm -rf {} +
 
 declare in
 
-echo '==> Checking for pacman database lock'
+print_inf 'Checking for pacman database lock'
 if stat '/var/lib/pacman/db.lck' > /dev/null 2> /dev/null; then
   pidof pacman > /dev/null \
-  && echo 'Pacman is currently in use. Try again later.' >&2 \
+  && print_err 'Pacman is currently in use. Try again later.' \
   && exit 1
-  printf '::> Do you want to remove /var/lib/pacman/db.lck? [y/N]: ' && read in
+
+  print_qry 'Do you want to remove /var/lib/pacman/db.lck? [y/N]:'
+  read in
   case "${in,,}" in
     'y'|'yes') sudo rm /var/lib/pacman/db.lck ;;
-    *) echo '==> Following operations may fail.' ;;
+    *) print_wrn 'Following operations may fail.' ;;
   esac
 fi
 
@@ -24,12 +32,12 @@ function query {
   sudo pacman $flg 2> /dev/null | grep -v ' 0 missing files' | awk -F ': ' '{ print $1 }'
 }
 
-echo '==> Querying for missing files'
+print_inf 'Querying for missing files'
 declare exp="$(query -Qke)"
 declare dep="$(query -Qkd)"
 
 [ -z "$exp" ] && [ -z "$dep" ] \
-&& echo '==> No issues found. :)' \
+&& print_fin 'No issues found. :)' \
 && exit 0
 
 declare inst
@@ -39,8 +47,8 @@ for m in paru yay pacman; do
   && break
 done
 
-[ -z "$inst" ] && echo "==> No package manager found (paru, yay, or pacman)" >&2 && exit 1
-echo "==> Selected '$inst' as installer for following operations"
+[ -z "$inst" ] && print_err 'No package manager found (paru, yay, or pacman)' && exit 1
+print_inf "Selected '$inst' as installer for following operations"
 [ "$inst" == pacman ] && inst='sudo pacman'
 
 function reinstall {
@@ -54,8 +62,8 @@ function reinstall {
   local n="$(echo "$pak" | wc -l)"
   [ "$n" -ne 1 ] && pl='s'
 
-  echo "==> Reinstalling $n $dsc package$pl with missing files"
-  [ "$n" -gt 1 ] && printf '::> Do you want to be prompted for every package? [y/N]: ' && read in
+  print_inf "Reinstalling $n $dsc package$pl with missing files"
+  [ "$n" -gt 1 ] && print_qry 'Do you want to be prompted for every package? [y/N]:' && read in
 
   case "${in,,}" in
     'y'|'yes') for p in $pak; do $com -S $flg $p; done ;;
@@ -66,10 +74,10 @@ function reinstall {
 while [ -n "$dep" ] || [ -n "$exp" ]; do
   [ -n "$dep" ] && reinstall "$inst" "$dep" '--asdeps' "dependency"
   [ -n "$exp" ] && reinstall "$inst" "$exp" '--asexplicit' "explicitly installed"
-  echo '==> Querying for missing files again'
+  print_inf 'Querying for missing files again'
   dep="$(query -Qkd)"
   exp="$(query -Qke)"
 done
 
-echo '==> No more issues found. :)'
+print_fin 'No more issues found. :)'
 exit 0

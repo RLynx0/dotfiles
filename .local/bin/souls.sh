@@ -14,6 +14,16 @@ function load_theme_simple {
   M='\033[35m'
 }
 
+function load_theme_loreaccurate {
+  R='\033[38;2;255;0;0m'
+  O='\033[38;2;252;166;0m'
+  Y='\033[38;2;255;255;0m'
+  G='\033[38;2;0;192;0m'
+  C='\033[38;2;66;252;255m'
+  B='\033[38;2;0;60;255m'
+  M='\033[38;2;213;53;217m'
+}
+
 function load_theme_edge {
   R='\033[38;2;173;46;74m'
   O='\033[38;2;173;76;46m'
@@ -181,7 +191,7 @@ function maybe_dog {
 
 
 function print_usage {
-  echo "Usage: $SELF [-t <DEFAULT THEME>] [-F <INLINE THEME>] [-f <THEME FILE>] [t|s|m|l]"
+  echo "Usage: $SELF [-t <DEFAULT THEME>] [-F <INLINE THEME>] [-f <THEME FILE>] [t|s|m|l|d]"
   echo "Run $SELF -h for a detailed help message"
 }
 
@@ -192,14 +202,16 @@ function print_help {
   echo "          Can be one of these values:                   "
   echo "          * t | tiny                                    "
   echo "          * s | small                                   "
-  echo "          * m | medium                                  "
+  echo "          * m | medium       <- this is the default MODE"
   echo "          * l | large                                   "
   echo "          * d | dog                                     "
   printf "\nOptions:\n"
   echo "  -t <DEFAULT THEME>  Sets the default color theme to use       "
   echo "                      Available themes are:                     "
   echo "                      * simple                                  "
+  echo "                      * loreaccurate                            "
   echo "                      * darklynx                                "
+  echo "                      * edge                                    "
   echo "                                                                "
   echo "  -f <THEME FILE>     Path to a theme configuration file        "
   echo "                      Each line configures the color of one SOUL"
@@ -247,11 +259,12 @@ while getopts "t:f:v:sh" arg; do
     v) eval "$(echo "$OPTARG" | parse_theme)" ;;
     t)
       case "$OPTARG" in
+        "loreaccurate") load_theme_loreaccurate ;;
         "darklynx") load_theme_darklynx ;;
         "simple") load_theme_simple ;;
         "edge") load_theme_edge ;;
         *)
-          echo 'Available themes: darklynx, simple, edge' >&2
+          echo 'Available themes: simple, loreaccurate, darklynx, edge' >&2
           exit 1
           ;;
       esac

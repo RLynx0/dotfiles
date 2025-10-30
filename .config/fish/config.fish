@@ -89,7 +89,7 @@ else if status is-interactive
 
     # GREETING
     if command -vq souls.sh
-        souls.sh m | awk '
+        souls.sh -t darklynx m | awk '
             BEGIN { print "" }
             { print "  " $0 }
             END { print "" }'

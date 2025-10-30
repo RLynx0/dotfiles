@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-default_theme="darklynx"
-RESET='\033[0m'
+readonly RESET='\033[0m'
+readonly DEFAULT_MODE="medium"
+readonly SELF="$(basename $0)"
 
 function load_theme_simple {
   R='\033[31m'
@@ -26,10 +27,8 @@ function load_theme_edge {
 function load_theme_darklynx {
   R='\033[38;2;208;88;80m'
   O='\033[38;2;208;128;80m'
-# Y='\033[38;2;208;176;128m'
   Y='\033[38;2;208;192;128m'
   G='\033[38;2;96;208;160m'
-# C='\033[38;2;96;192;192m'
   C='\033[38;2;96;208;216m'
   B='\033[38;2;80;160;208m'
   M='\033[38;2;192;128;216m'
@@ -41,9 +40,9 @@ function parse_rgb {
   | awk -v t="$2" -F '[\t ]*[,;][\t ]*' '{
     printf "%s=\"", t
     printf "\\\\033[38;2;"
-    printf "$(calc \"%s\" | tr -d \"\\t\");", $1
-    printf "$(calc \"%s\" | tr -d \"\\t\");", $2
-    printf "$(calc \"%s\" | tr -d \"\\t\")m", $3
+    printf "$((16#%s));", $1
+    printf "$((16#%s));", $2
+    printf "$((16#%s))m", $3
     printf "\"\n"
   }'
 }
@@ -53,6 +52,8 @@ function parse_theme {
     BEGIN { IGNORECASE = 1 }
 
     { t = 0 }
+
+    /^\s*$/ { next }
     /^\s*(r(ed)?|determination|frisk|chara)\s*=/  { t = "R" }
     /^\s*(o(range)?|bravery)\s*=/                 { t = "O" }
     /^\s*(y(ellow)?|justice|clover)\s*=/          { t = "Y" }
@@ -60,14 +61,13 @@ function parse_theme {
     /^\s*(c(yan)?|a(qua)?|patience)\s*=/          { t = "C" }
     /^\s*(b(lue)?|integrity)\s*=/                 { t = "B" }
     /^\s*(m(agenta)?|p(urple)?|perseverance)\s*=/ { t = "M" }
-    /^\s*$/ { next }
 
-    t && $2 ~ /#([0-9]|[a-f]){6}\s*;?\s*$/ {
+    t && $2 ~ /^#([0-9]|[a-f]){6}\s*;?\s*$/ {
       printf "%s=\"", t
       printf "\\\\033[38;2;"
-      printf "$(calc \"0x%s\" | tr -d \"\\t\");", substr($2, 2, 2)
-      printf "$(calc \"0x%s\" | tr -d \"\\t\");", substr($2, 4, 2)
-      printf "$(calc \"0x%s\" | tr -d \"\\t\")m", substr($2, 6, 2)
+      printf "$((16#%s));", substr($2, 2, 2)
+      printf "$((16#%s));", substr($2, 4, 2)
+      printf "$((16#%s))m", substr($2, 6, 2)
       printf "\"\n"
       next
     }
@@ -181,19 +181,20 @@ function maybe_dog {
 
 
 function print_usage {
-  echo "Usage: $(basename $0) [-t <DEFAULT THEME>] [-f <THEME FILE>] tiny|small|medium|large"
-  echo "Run $(basename $0) -h for a detailed help message"
+  echo "Usage: $SELF [-t <DEFAULT THEME>] [-F <INLINE THEME>] [-f <THEME FILE>] [t|s|m|l]"
+  echo "Run $SELF -h for a detailed help message"
 }
 
 function print_help {
-  echo "Usage: $(basename $0) [OPTIONS] <SIZE>"
+  echo "Usage: $SELF [OPTIONS] [MODE]"
   printf "\nArguments:\n"
-  echo "  <SIZE>  Set the size that SOULs should be printed with"
+  echo "  <MODE>  Set the size that SOULs should be printed with"
   echo "          Can be one of these values:                   "
   echo "          * t | tiny                                    "
   echo "          * s | small                                   "
   echo "          * m | medium                                  "
   echo "          * l | large                                   "
+  echo "          * d | dog                                     "
   printf "\nOptions:\n"
   echo "  -t <DEFAULT THEME>  Sets the default color theme to use       "
   echo "                      Available themes are:                     "
@@ -226,21 +227,34 @@ function print_help {
   echo "                      * BLUE = 20, 100, 255                     "
   echo "                      * m    = 230,80,255;                      "
   echo "                                                                "
+  echo "  -v <THEME VAR>      Set the value of a single theme variable  "
+  echo "                      The format is the same as for theme files "
+  echo "                                                                "
+  echo "                      Examples:                                 "
+  echo "                      * $SELF -v 'RED = 128; 20; 20'            "
+  echo "                      * $SELF -vr=#fe1225 -vb=#1225fe           "
+  echo "                                                                "
   echo "  -s                  Show ANSI codes for used colors and exit  "
   echo "  -h                  Print this help message                   "
 }
 
+load_theme_simple
 
-while getopts "t:f:sh" arg; do
+while getopts "t:f:v:sh" arg; do
     case $arg in
+    s) show_value="yes"                       ;;
+    f) eval "$(cat "$OPTARG" | parse_theme)"  ;;
+    v) eval "$(echo "$OPTARG" | parse_theme)" ;;
     t)
-      default_theme="$OPTARG"
-      ;;
-    f)
-      theme_file="$OPTARG"
-      ;;
-    s)
-      show_value="yes"
+      case "$OPTARG" in
+        "darklynx") load_theme_darklynx ;;
+        "simple") load_theme_simple ;;
+        "edge") load_theme_edge ;;
+        *)
+          echo 'Available themes: darklynx, simple, edge' >&2
+          exit 1
+          ;;
+      esac
       ;;
     h)
       print_help
@@ -253,34 +267,20 @@ while getopts "t:f:sh" arg; do
 done
 shift $(($OPTIND-1))
 
-if [ "$default_theme" == "darklynx" ]; then
-  load_theme_darklynx
-elif [ "$default_theme" == "simple" ]; then
-  load_theme_simple
-elif [ "$default_theme" == "edge" ]; then
-  load_theme_edge
-else
-  echo "Available themes: darklynx, simple, edge" >&2
-  exit 1
-fi
-
-[ ! -z "$theme_file" ] && eval "$(cat "$theme_file" | parse_theme)"
-[ ! -z "$show_value" ] && printf \
-  "$R# R='%s'\n$O# O='%s'\n$Y# Y='%s'\n$G# G='%s'\n$C# C='%s'\n$B# B='%s'\n$M# M='%s'\n" \
+[ -n "$show_value" ] && printf \
+  "$R# R='%s'\n$O# O='%s'\n$Y# Y='%s'\n$G# G='%s'\n$C# C='%s'\n$B# B='%s'\n$M# M='%s'\n$RESET" \
   "$R" "$O" "$Y" "$G" "$C" "$B" "$M" \
   && exit
 
-if [ "$1" == "tiny" -o "$1" == "t" ]; then
-  maybe_dog || tiny
-elif [ "$1" == "small" -o "$1" == "s" ]; then
-  maybe_dog || small
-elif [ "$1" == "medium" -o "$1" == "m" ]; then
-  maybe_dog || medium
-elif [ "$1" == "large" -o "$1" == "l" ]; then
-  maybe_dog || large
-elif [ "$1" == "dog" -o "$1" == "d" ]; then
-  dog_rand
-else
-  print_usage >&2
-  exit 1
-fi
+mode="${1:-"$DEFAULT_MODE"}"
+case "$mode" in
+  't'|'tiny')   maybe_dog || tiny   ;;
+  's'|'small')  maybe_dog || small  ;;
+  'm'|'medium') maybe_dog || medium ;;
+  'l'|'large')  maybe_dog || large  ;;
+  'd'|'dog')    dog_rand            ;;
+  *)
+    print_usage >&2
+    exit 1
+    ;;
+esac

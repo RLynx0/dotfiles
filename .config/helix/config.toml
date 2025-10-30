@@ -48,9 +48,11 @@ r = ":reload-all"
 
 c = ":config-reload"
 C = ":config-open"
+A-c = ":o .helix/config.toml"
 s = ":o ~/.config/helix/themes/dark-lynx.toml"
 l = ":lsp-restart"
 L = ":o ~/.config/helix/languages.toml"
+A-l = ":o .helix/languages.toml"
 
 [keys.normal."+"]
 b = ":sh cargo build"

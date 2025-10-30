@@ -1,7 +1,8 @@
-[language-server.rust-analyzer]
-config = { procMacro = { ignored = { leptos_macro = [
+[language-server.rust-analyzer.config]
+cargo = { allFeatures = true }
+procMacro = { ignored = { leptos_macro = [
     "server"
-] } } }
+] } }
 
 [language-server.emmet-lsp]
 command = "emmet-language-server"

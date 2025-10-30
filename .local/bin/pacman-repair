@@ -8,8 +8,12 @@ function print_wrn { printf '\033[033m==> WARNING:\033[0m %s\n' "$1" >&2; }
 
 sudo -v
 
-print_inf 'Removing leftover install files'
-sudo find /var/cache/pacman/pkg/ -mindepth 1 -maxdepth 1 -type d -name 'download-*' -exec rm -rf {} +
+if stat '/var/cache/pacman/pkg' > /dev/null 2> /dev/null; then
+  print_inf 'Removing leftover install files'
+  sudo find '/var/cache/pacman/pkg/' -mindepth 1 -maxdepth 1 -type d -name 'download-*' -exec rm -rf {} +
+else
+  print_wrn 'Failed to stat /var/cache/pacman/pkg'
+fi
 
 declare in
 

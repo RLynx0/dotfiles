@@ -64,13 +64,13 @@ function parse_theme {
     { t = 0 }
 
     /^\s*$/ { next }
-    /^\s*(r(ed)?|determination|frisk|chara)\s*=/  { t = "R" }
-    /^\s*(o(range)?|bravery)\s*=/                 { t = "O" }
-    /^\s*(y(ellow)?|justice|clover)\s*=/          { t = "Y" }
-    /^\s*(g(reen)?|kindness)\s*=/                 { t = "G" }
-    /^\s*(c(yan)?|a(qua)?|patience)\s*=/          { t = "C" }
-    /^\s*(b(lue)?|integrity)\s*=/                 { t = "B" }
-    /^\s*(m(agenta)?|p(urple)?|perseverance)\s*=/ { t = "M" }
+    /^\s*(r(ed)?|determination|frisk|chara|kris)\s*=/ { t = "R" }
+    /^\s*(o(range)?|bravery)\s*=/                     { t = "O" }
+    /^\s*(y(ellow)?|justice|clover)\s*=/              { t = "Y" }
+    /^\s*(g(reen)?|kindness)\s*=/                     { t = "G" }
+    /^\s*(c(yan)?|a(qua)?|patience)\s*=/              { t = "C" }
+    /^\s*(b(lue)?|integrity)\s*=/                     { t = "B" }
+    /^\s*(m(agenta)?|p(urple)?|perseverance)\s*=/     { t = "M" }
 
     t && $2 ~ /^#([0-9]|[a-f]){6}\s*;?\s*$/ {
       printf "%s=\"", t
@@ -199,55 +199,55 @@ function print_help {
   echo "Usage: $SELF [OPTIONS] [MODE]"
   printf "\nArguments:\n"
   echo "  <MODE>  Set the size that SOULs should be printed with"
-  echo "          Can be one of these values:                   "
-  echo "          * t | tiny                                    "
-  echo "          * s | small                                   "
+  echo "          Can be one of these values:"
+  echo "          * t | tiny"
+  echo "          * s | small"
   echo "          * m | medium       <- this is the default MODE"
-  echo "          * l | large                                   "
-  echo "          * d | dog                                     "
+  echo "          * l | large"
+  echo "          * d | dog"
   printf "\nOptions:\n"
-  echo "  -t <DEFAULT THEME>  Sets the default color theme to use       "
-  echo "                      Available themes are:                     "
-  echo "                      * simple                                  "
-  echo "                      * loreaccurate                            "
-  echo "                      * darklynx                                "
-  echo "                      * edge                                    "
-  echo "                                                                "
-  echo "  -f <THEME FILE>     Path to a theme configuration file        "
+  echo "  -t <DEFAULT THEME>  Sets the default color theme to use"
+  echo "                      Available themes are:"
+  echo "                      * simple"
+  echo "                      * loreaccurate"
+  echo "                      * darklynx"
+  echo "                      * edge"
+  echo ""
+  echo "  -f <THEME FILE>     Path to a theme configuration file"
   echo "                      Each line configures the color of one SOUL"
-  echo "                      The configuration is case insensitive     "
-  echo "                      Whitespace around tokens is ignored       "
-  echo "                      Use the format <KEY>=<COLOR>              "
-  echo "                                                                "
-  echo "                      Valid keys are:                           "
-  echo "                      * r | red | determination | frisk | chara "
-  echo "                      * o | orange | bravery                    "
-  echo "                      * y | yellow | justice | clover           "
-  echo "                      * g | green | kindness                    "
-  echo "                      * b | blue | integrity                    "
-  echo "                      * c | a | cyan | aqua | patience          "
-  echo "                      * p | m | purple | magenta | perseverance "
-  echo "                                                                "
-  echo "                      Valid Color formats are:                  "
-  echo "                      * Hex    #0088ff                          "
-  echo "                      * RGB    0, 127, 255                      "
-  echo "                               0; 127; 255                      "
-  echo "                                                                "
-  echo "                      Examples:                                 "
-  echo "                      * Red = #ff4220                           "
-  echo "                      * green=0;255;0;                          "
-  echo "                      * BLUE = 20, 100, 255                     "
-  echo "                      * m    = 230,80,255;                      "
-  echo "                                                                "
-  echo "  -v <THEME VAR>      Set the value of a single theme variable  "
-  echo "                      The format is the same as for theme files "
-  echo "                                                                "
-  echo "                      Examples:                                 "
-  echo "                      * $SELF -v 'RED = 128; 20; 20'            "
-  echo "                      * $SELF -vr=#fe1225 -vb=#1225fe           "
-  echo "                                                                "
-  echo "  -s                  Show ANSI codes for used colors and exit  "
-  echo "  -h                  Print this help message                   "
+  echo "                      The configuration is case insensitive"
+  echo "                      Whitespace around tokens is ignored"
+  echo "                      Use the format <KEY>=<COLOR>"
+  echo ""
+  echo "                      Valid keys are:"
+  echo "                      * r | red | determination | frisk | chara | kris"
+  echo "                      * o | orange | bravery"
+  echo "                      * y | yellow | justice | clover"
+  echo "                      * g | green | kindness"
+  echo "                      * b | blue | integrity"
+  echo "                      * c | a | cyan | aqua | patience"
+  echo "                      * p | m | purple | magenta | perseverance"
+  echo ""
+  echo "                      Valid Color formats are:"
+  echo "                      * Hex    #0088ff"
+  echo "                      * RGB    0, 127, 255"
+  echo "                               0; 127; 255"
+  echo ""
+  echo "                      Examples:"
+  echo "                      * Red = #ff4220"
+  echo "                      * green=0;255;0;"
+  echo "                      * BLUE = 20, 100, 255"
+  echo "                      * m    = 230,80,255;"
+  echo ""
+  echo "  -v <THEME VAR>      Set the value of a single theme variable"
+  echo "                      The format is the same as for theme files"
+  echo ""
+  echo "                      Examples:"
+  echo "                      * $SELF -v 'RED = 128; 20; 20'"
+  echo "                      * $SELF -vr=#fe1225 -vb=#1225fe"
+  echo ""
+  echo "  -s                  Show ANSI codes for used colors and exit"
+  echo "  -h                  Print this help message"
 }
 
 load_theme_simple

@@ -86,7 +86,7 @@
 "operator" = { fg = "orange" }
 "function" = { fg = "yellow" }
 "function.macro" = { fg = "blue", modifiers = ["italic"] }
-"namespace" = { fg = "yellow", modifiers = ["italic"] }
+"namespace" = { fg = "green", modifiers = ["italic"] }
 "tag" = { fg = "orange" }
 "attribute" = { fg = "magenta", modifiers = ["italic"] }
 "constructor" = { fg = "blue" }
@@ -95,12 +95,12 @@
 
 # markup
 "markup.heading.marker" = { fg = "la0" }
-"markup.heading.1" = { fg = "red", modifiers = ["bold"] }
-"markup.heading.2" = { fg = "orange", modifiers = ["bold"] }
-"markup.heading.3" = { fg = "yellow", modifiers = ["bold"] }
-"markup.heading.4" = { fg = "green", modifiers = ["bold"] }
-"markup.heading.5" = { fg = "blue", modifiers = ["bold"] }
-"markup.heading.6" = { fg = "magenta", modifiers = ["bold"] }
+"markup.heading.1" = { fg = "red", modifiers = ["bold", "italic"] }
+"markup.heading.2" = { fg = "orange", modifiers = ["bold", "italic"] }
+"markup.heading.3" = { fg = "yellow", modifiers = ["bold", "italic"] }
+"markup.heading.4" = { fg = "green", modifiers = ["bold", "italic"] }
+"markup.heading.5" = { fg = "blue", modifiers = ["bold", "italic"] }
+"markup.heading.6" = { fg = "magenta", modifiers = ["bold", "italic"] }
 "markup.list" = { fg = "red" }
 "markup.bold" = { modifiers = ["bold"] }
 "markup.italic" = { modifiers = ["italic"] }

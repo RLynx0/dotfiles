@@ -105,6 +105,13 @@ if command_q paccache && [ -z "$skip_pacman" ]; then
     print_separator
 fi
 
+# NixOs
+if command_q nixos-rebuild; then
+    echo " Rebuilding NixOS..."
+    sudo nixos-rebuild switch
+    print_separator
+fi
+
 # Flatpak
 [ -n "$auto_confirm" ] && yflag='--assumeyes'
 if command_q flatpak; then

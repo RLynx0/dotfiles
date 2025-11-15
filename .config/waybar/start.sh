@@ -19,5 +19,5 @@
 #       |___/\_, | |_|_\____\_, |_||_/_\_\\__/        #
 #            |__/           |__/                      #
 
-killall waybar
+for p in $(pidof waybar); do kill "$p"; done
 waybar -c ~/.config/waybar/config -s ~/.config/waybar/style.css &

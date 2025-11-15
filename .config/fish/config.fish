@@ -34,6 +34,7 @@ set -x STACK_XDG 1
 set -x W3M_DIR "$XDG_DATA_HOME/w3m"
 set -x WGETRC "$XDG_CONFIG_HOME/wgetrc"
 set -x WINEPREFIX "$XDG_DATA_HOME/wine"
+alias svn="svn --config-dir $XDG_CONFIG_HOME/subversion"
 alias wget="wget --hsts-file='$XDG_DATA_HOME/wget-hsts'"
 
 # SET PATH

@@ -71,7 +71,7 @@ function last_data_num {
 }
 
 function new_data_num {
-  calc "$(last_data_num) + 1" | tr -d "\t"
+  echo "$(("$(last_data_num)" + 1))"
 }
 
 function new_data_path {

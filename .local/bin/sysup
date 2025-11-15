@@ -109,6 +109,7 @@ fi
 if command_q nixos-rebuild; then
     echo " Rebuilding NixOS..."
     sudo nixos-rebuild switch
+    sudo nix-store --gc
     print_separator
 fi
 

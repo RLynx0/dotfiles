@@ -110,6 +110,7 @@ if command_q nixos-rebuild; then
     echo " Rebuilding NixOS..."
     sudo nixos-rebuild switch
     sudo nix-store --gc
+    sudo nix-collect-garbage --delete-older-than 30d
     print_separator
 fi
 

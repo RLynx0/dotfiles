@@ -26,7 +26,7 @@ if [ -f "$pidfile" ]; then
 fi
 
 echo "$$" > "$pidfile"
-pkill -x hypridle
+while pidof hypridle; do pkill -x hypridle; done
 trap clean-exit SIGINT SIGTERM
 notify-send -a "$self" "$self" 'Coffee consumed\nSystem wide awake'
 echo 'Stopped hypridle' >&2

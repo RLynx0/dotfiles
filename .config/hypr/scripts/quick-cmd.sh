@@ -177,7 +177,7 @@ function save_setup {
 }
 
 function open_cmd {
-  hyprctl keyword windowrulev2 "float, class:$CMD_CLASS"
+  hyprctl keyword windowrule "match:class $CMD_CLASS, float on"
   "$TERMINAL" --class "$CMD_CLASS" "$1" &
   while true; do already_open && break; sleep 0.05; done
 }

@@ -142,7 +142,7 @@
     "format-alt": "{:%Y-%m-%d %H:%M}"
   },
   "custom/appmenu": {
-    "format": " ",
+    "format": " ",
     "on-click": "wofi --insensitive --allow-images --show drun",
     "tooltip": false
   },

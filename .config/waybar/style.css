@@ -29,6 +29,7 @@ window#waybar {
   transition-property: background-color;
   transition-duration: .5s;
   border-radius: 1.2em;
+  color: #ccc;
 }
 
 window#waybar.empty {
@@ -62,6 +63,7 @@ window#waybar.empty #workspaces {
   border-radius: 50%;
   transition-property: background-color;
   transition-duration: .25s;
+  color: #666;
 }
 #workspaces button:first-child {
   margin-left: 0.4em;

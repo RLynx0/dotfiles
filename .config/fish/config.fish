@@ -78,6 +78,7 @@ zoxide init --cmd cd fish | source
 
 # DIRENV
 direnv hook fish | source
+set -x DIRENV_LOG_FORMAT ''
 
 # START
 set -x fish_greeting

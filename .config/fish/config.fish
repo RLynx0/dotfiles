@@ -27,7 +27,7 @@ set -x PYTHONPYCACHEPREFIX "$XDG_CACHE_HOME/python"
 set -x PYTHONUSERBASE "$XDG_DATA_HOME/python"
 set -x PYTHON_HISTORY "$XDG_STATE_HOME/python/history"
 set -x RANDFILE "$XDG_DATA_HOME/randfile"
-set -x RUSTUP_HOME "$XDG_DATA_HOME/rustup"
+# set -x RUSTUP_HOME "$XDG_DATA_HOME/rustup"
 set -x SCREENRC "$XDG_CONFIG_HOME/screen/screenrc"
 set -x SCREENDIR "$XDG_RUNTIME_DIR/screen"
 set -x STACK_XDG 1
@@ -75,6 +75,9 @@ alias icat='kitty +kitten icat'
 
 # ZOXIDE
 zoxide init --cmd cd fish | source
+
+# DIRENV
+direnv hook fish | source
 
 # START
 set -x fish_greeting

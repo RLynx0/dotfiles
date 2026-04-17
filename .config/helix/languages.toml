@@ -12,24 +12,6 @@ args = ["--stdio"]
 [[language]]
 name = "rust"
 
-[language.debugger]
-command = "lldb-vscode"
-name = "lldb-vscode"
-port-arg = "--port {}"
-transport = "tcp"
-
-[[language.debugger.templates]]
-name = "binary"
-request = "launch"
-
-[[language.debugger.templates.completion]]
-completion = "filename"
-name = "binary"
-
-[language.debugger.templates.args]
-program = "{0}"
-runInTerminal = true
-
 
 [[language]]
 name = "css"

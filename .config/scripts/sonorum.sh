@@ -13,7 +13,7 @@
 #                   |__/           |__/                            #
 
 
-LIMIT="${LIMIT:-"1.2"}"
+LIMIT="${LIMIT:-"1.25"}"
 SINK="${SINK:-"@DEFAULT_AUDIO_SINK@"}"
 
 

@@ -8,17 +8,19 @@ procMacro = { ignored = { leptos_macro = [
 command = "emmet-language-server"
 args = ["--stdio"]
 
-
-[[language]]
-name = "rust"
-
+# ---
 
 [[language]]
 name = "css"
 auto-format = false
 
-
 [[language]]
 name = "html"
 language-servers = ["vscode-html-language-server", "emmet-lsp"]
 auto-format = false
+
+[[language]]
+name = "ron"
+language-servers = ["ron-lsp"]
+auto-format = true
+

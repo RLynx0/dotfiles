@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Dropout.TV
+Comment=Open Dropout.tv in Browser
+Exec=sh -c '$HOME/.config/scripts/librewolf-workspace.sh https://www.dropout.tv/'
+Icon=dropout_icon
+Terminal=false
+Type=Application
+Categories=Network;AudioVideo;Player;
+

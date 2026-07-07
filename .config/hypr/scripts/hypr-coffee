@@ -12,7 +12,7 @@ function clean-exit {
 }
 
 function stop {
-  hyprctl dispatch exec hypridle > /dev/null
+  hyprctl dispatch 'hl.dsp.exec_cmd("hypridle")' > /dev/null
   notify-send -a "$self" "$self" 'Running low on caffeine\nRestarted hypridle'
   echo 'Restarted hypridle' >&2
   clean-exit

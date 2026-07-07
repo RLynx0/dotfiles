@@ -88,8 +88,8 @@ check_command "$TERMINAL"
 check_command hyprctl
 check_command jq
 
-BORDER="$(hyprctl getoption general:border_size | head -1 | awk '{ print $2 }')"
-GAPS=($(hyprctl getoption general:gaps_out | head -1 | awk -F ': ' '{ print $2 }'))
+BORDER="$(hyprctl getoption general.border_size | head -1 | awk '{ print $2 }')"
+GAPS=($(hyprctl getoption general.gaps_out | head -1 | awk -F ': ' '{ print $2 }'))
 GAP_T="${GAPS[0]}"; GAP_R="${GAPS[1]}";
 GAP_B="${GAPS[2]}"; GAP_L="${GAPS[3]}";
 OFF_Y="$(((GAP_T - GAP_B) / 2))"
@@ -164,42 +164,45 @@ function in_ws {
 
 function save_setup {
   hyprctl activewindow | awk '
-    /^\s*size:/ { print "resizeactive -- \"exact "$2"\"" }
-    /^\s*at:/ { print "moveactive -- \"exact "$2"\"" }
-  ' | tr ',' ' ' | awk '{ print "hyprctl dispatch "$0 }
-  ' > "$SET_FILE";
+    /^\s*size:/ { split($2, a, ","); print "hyprctl dispatch '\''hl.dsp.window.resize({ x = " a[1] ", y = " a[2] ", relative = false })'\''"}
+    /^\s*at:/ { split($2, a, ","); print "hyprctl dispatch '\''hl.dsp.window.move({ x = " a[1] ", y = " a[2] ", relative = false })'\''"}
+  ' > "$SET_FILE"
 }
 
 function open_cmd {
-  hyprctl keyword windowrule "match:class $CMD_CLASS, float on"
+  hyprctl eval 'hl.window_rule({ name = "float-'"$CMD_CLASS"'", match = { class = "'"$CMD_CLASS"'" }, float = true })'
   "$TERMINAL" --class "$CMD_CLASS" "$1" &
   while true; do already_open && break; sleep 0.05; done
 }
 
 function toggle_view {
-  in_ws && hyprctl dispatch togglespecialworkspace "$WORKSPACE" \
-  || hyprctl dispatch focuswindow "class:$CMD_CLASS"
+  in_ws && hyprctl dispatch 'hl.dsp.workspace.toggle_special("'"$WORKSPACE"'")' \
+  || hyprctl dispatch 'hl.dsp.focus({ window = "class:'"$CMD_CLASS"'" })'
 }
 
 function dock {
-  hyprctl dispatch movewindow "$1"
+  local _dir="$1"
+  [[ "$_dir" == t ]] && _dir=u
+  [[ "$_dir" == b ]] && _dir=d
+  hyprctl dispatch 'hl.dsp.window.move({ direction = "'"$_dir"'" })'
   case "$1" in
-    u|t) hyprctl dispatch moveactive -- "0 $GAP_T"  ;;
-    d|b) hyprctl dispatch moveactive -- "0 -$GAP_B" ;;
-    l)   hyprctl dispatch moveactive -- "$GAP_L 0"  ;;
-    r)   hyprctl dispatch moveactive -- "-$GAP_R 0" ;;
+    u|t) hyprctl dispatch 'hl.dsp.window.move({ x = 0, y = '"$GAP_T"', relative = true })'  ;;
+    d|b) hyprctl dispatch 'hl.dsp.window.move({ x = 0, y = -'"$GAP_B"', relative = true })' ;;
+    l)   hyprctl dispatch 'hl.dsp.window.move({ x = '"$GAP_L"', y = 0, relative = true })'  ;;
+    r)   hyprctl dispatch 'hl.dsp.window.move({ x = -'"$GAP_R"', y = 0, relative = true })' ;;
   esac
 }
 
 function setup {
   [ -d "$CACHE_DIR" ] || mkdir -p "$CACHE_DIR"
-  in_ws || hyprctl dispatch movetoworkspace "special:$WORKSPACE"
+  in_ws || hyprctl dispatch 'hl.dsp.window.move({ workspace = "special:'"$WORKSPACE"'" })'
   resolve_hwd && unchanged && sh "$SET_FILE" && return
-  hyprctl dispatch setfloating
-  hyprctl dispatch resizeactive "exact $WIDTH $HEIGHT"
-  hyprctl dispatch resizeactive -- "$(probe_reserved)"
-  hyprctl dispatch centerwindow 1
-  hyprctl dispatch moveactive -- "0 $OFF_Y"
+  hyprctl dispatch 'hl.dsp.window.float()'
+  hyprctl dispatch 'hl.dsp.window.resize({ x = "'"$WIDTH"'", y = "'"$HEIGHT"'", relative = false })'
+  local _pr=($(probe_reserved))
+  hyprctl dispatch 'hl.dsp.window.resize({ x = '"${_pr[0]}"', y = '"${_pr[1]}"', relative = true })'
+  hyprctl dispatch 'hl.dsp.window.center()'
+  hyprctl dispatch 'hl.dsp.window.move({ x = 0, y = '"$OFF_Y"', relative = true })'
   while read -n1 d; do case "$d" in
     u|t|d|b|l|r) dock "$d" ;;
   esac; done <<< "$DOCK"

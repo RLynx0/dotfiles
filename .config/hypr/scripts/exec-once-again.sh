@@ -30,7 +30,7 @@ function process {
         ;;
       'exec')
         printf "Executing '%s' : " "$comm" >&2
-        hyprctl dispatch exec "$comm" >&2
+        hyprctl dispatch 'hl.dsp.exec_cmd("'"$comm"'")' >&2
         ;;
       *) echo "Unknown #R instruction '$inst'" >&2 ;;
     esac

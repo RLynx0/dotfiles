@@ -25,8 +25,8 @@ function windows_in_workspace {
 }
 
 function focus_and_move {
-  hyprctl dispatch focuswindow "address:0x$1"
-  hyprctl dispatch movetoworkspace "$2"
+  hyprctl dispatch 'hl.dsp.focus({ window = "address:0x'"$1"'" })'
+  hyprctl dispatch 'hl.dsp.window.move({ workspace = '"$2"' })'
 }
 
 echo "swapping from $active to $target"

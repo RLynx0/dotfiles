@@ -57,7 +57,7 @@ new_scale="$(\
     | wofi --dmenu --cache-file="/dev/null" -ip "Set scale for $monitor, currently at $scale"\
 )"
 [ "$new_scale" != "" ] \
-&& hyprctl keyword monitor "desc:$description, preferred, $offset, $new_scale" \
+&& hyprctl eval 'hl.monitor({ output = "desc:'"$description"'", mode = "preferred", position = "'"$offset"'", scale = "'"$new_scale"'" })' \
 && sleep 0.2 \
 && notify \
 && waypaper --restore

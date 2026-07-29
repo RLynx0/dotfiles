@@ -1,5 +1,5 @@
 local function enableLaptopMonitor()
-    hl.monitor({ output = "desc:BOE 0x095F", mode = "preferred", position = "0x0", scale = "auto" })
+    hl.monitor({ output = "desc:BOE 0x095F", mode = "preferred", position = "0x0", scale = "auto", disabled = false })
 end
 
 local function disableLaptopMonitor()

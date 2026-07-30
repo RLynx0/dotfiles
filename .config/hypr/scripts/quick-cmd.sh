@@ -11,18 +11,20 @@
 #                | _ \ || | |   / |_| || | ' \\ \ / () |               #
 #                |___/\_, | |_|_\____\_, |_||_/_\_\\__/                #
 #                     |__/           |__/                              #
-                                                                    
 
-DEFAULT_HEIGHT='100%'
-DEFAULT_WIDTH='40%'
-DEFAULT_DOCK='ur'
+
+set -uo pipefail
+
+readonly DEFAULT_HEIGHT='100%'
+readonly DEFAULT_WIDTH='40%'
+readonly DEFAULT_DOCK='ur'
 
 TERMINAL="${TERMINAL:-"kitty"}"
 HEIGHT="${HEIGHT:-"$DEFAULT_HEIGHT"}"
 WIDTH="${WIDTH:-"$DEFAULT_WIDTH"}"
 DOCK="${DOCK:-"$DEFAULT_DOCK"}"
 C_IND_H=0; C_IND_W=0; C_IND_D=0
-CLEAN_RESTORE=''; FORCE_FOCUS=''
+CLEAN_RESTORE='false'; FORCE_FOCUS=''
 
 function show_help {
   echo "Open, toggle and position a terminal window in a special hyprland workspace."
@@ -58,7 +60,7 @@ while getopts "H:W:d:c:w:t:frh" arg; do
     w) WORKSPACE="$OPTARG" ;;
     t) TERMINAL="$OPTARG" ;;
     f) FORCE_FOCUS='1' ;;
-    r) HEIGHT='$'; WIDTH='$'; DOCK='$'; CLEAN_RESTORE='1' ;;
+    r) HEIGHT='$'; WIDTH='$'; DOCK='$'; CLEAN_RESTORE='true' ;;
     h) show_help; exit ;;
     *)
       echo "Use the -h flag for usage." >&2
@@ -67,14 +69,11 @@ while getopts "H:W:d:c:w:t:frh" arg; do
 done
 shift $(($OPTIND-1))
 
+CMD_PROGRAM="${1:-""}"
 CACHE_DIR="${XDG_CACHE_HOME:-"$HOME/.cache"}/quick-cmd"
-CTX_FILE="$CACHE_DIR/quick-$1-$TERMINAL.ctx"
-SET_FILE="$CACHE_DIR/quick-$1-$TERMINAL.set"
-CMD_CLASS="${CMD_CLASS:-"quick-$1-$TERMINAL"}"
-WORKSPACE="${WORKSPACE:-"quick-$1-$TERMINAL"}"
-LITERAL_H="$HEIGHT"
-LITERAL_W="$WIDTH"
-LITERAL_D="$DOCK"
+CTX_FILE="$CACHE_DIR/quick-$CMD_PROGRAM-$TERMINAL.ctx"
+CMD_CLASS="${CMD_CLASS:-"quick-$CMD_PROGRAM-$TERMINAL"}"
+WORKSPACE="${WORKSPACE:-"quick-$CMD_PROGRAM-$TERMINAL"}"
 
 function check_command {
   command -v "$1" &>/dev/null || {
@@ -83,95 +82,147 @@ function check_command {
   }
 }
 
-[ -z "$1" ] || check_command "$1"
+[ -z "$CMD_PROGRAM" ] || check_command "$CMD_PROGRAM"
 check_command "$TERMINAL"
 check_command hyprctl
-check_command jq
 
-BORDER="$(hyprctl getoption general.border_size | head -1 | awk '{ print $2 }')"
-GAPS=($(hyprctl getoption general.gaps_out | head -1 | awk -F ': ' '{ print $2 }'))
-GAP_T="${GAPS[0]}"; GAP_R="${GAPS[1]}";
-GAP_B="${GAPS[2]}"; GAP_L="${GAPS[3]}";
-OFF_Y="$(((GAP_T - GAP_B) / 2))"
+# Loads variables LAST_DOCK, LAST_WIDTH, ...
+source "$CTX_FILE" 2> /dev/null
 
-function probe_reserved {
-  pos=($(hyprctl -j monitors | jq '.[] | select(.focused) | .reserved.[]'))
-  x0="${pos[0]}"; y0="${pos[1]}"; x1="${pos[2]}"; y1="${pos[3]}"
-  ox="$((x0 + x1 + 2 * BORDER + GAP_L + GAP_R))"
-  oy="$((y0 + y1 + 2 * BORDER + GAP_T + GAP_B))"
-  echo "-$ox -$oy"
-}
+function setup {
+  hyprctl repl "
+    function resolve_percentage(string_value, value_full)
+      local percent = string_value:match('^(%-?[%d%.]+)%%')
+      if (percent) then return ((tonumber(percent) or 100) / 100) * value_full end
+      return tonumber(string_value) or value_full
+    end
 
-function resolve_val {
-  local target="$1"
-  local default="$2"
-  local index=0
-  local -a values
-  IFS=',' read -ra values <<< "$target"
-  local n_vals="${#values[@]}"
-  local last_val="${3:-"$default"}"
-  local last_index="${4:-"$n_vals"}"
-  local last_literal="$5"
-  [ "$target" == "$last_literal" ] \
-  && index="$(((last_index + 1) % n_vals))"
-  target="${values["$index"]}"
-  [ "$target" == '-' ] && target="$default"
-  [ "$target" == '$' ] && target="$last_val"
-  echo "$target $index"
-}
+    function resolve_value(literal_value, last_literal, last_index, default, last_resolved)
+      local parts = {}
+      for part in literal_value:gmatch('([^,]+)') do table.insert(parts, part) end
+      local index = 1 + (last_index % #parts)
+      if literal_value ~= last_literal then index = 1 end
+      local value = parts[index]
+      if value == '-' then value = default end
+      if value == '$' then value = last_resolved end
+      return { value = value or default, index = index }
+    end
 
-function resolve_hwd {
-  set $(awk '{ print $3,$4,$5,$7,$8,$9,$10,$11,$12 }' "$CTX_FILE" 2> /dev/null)
-  local h="$1";  local w="$2";  local d="$3"
-  local ih="$4"; local iw="$5"; local id="$6"
-  local lh="$7"; local lw="$8"; local ld="$9"
-  set $(resolve_val "$HEIGHT" "$DEFAULT_HEIGHT" "$h" "$ih" "$lh"); HEIGHT="$1"; C_IND_H="$2"
-  set $(resolve_val "$WIDTH"  "$DEFAULT_WIDTH"  "$w" "$iw" "$lw"); WIDTH="$1";  C_IND_W="$2"
-  set $(resolve_val "$DOCK"   "$DEFAULT_DOCK"   "$d" "$id" "$ld"); DOCK="$1";   C_IND_D="$2"
-  if [ -n "$CLEAN_RESTORE" ]; then
-  C_IND_D="${id:-0}"; LITERAL_H="${lh:-"$HEIGHT"}"
-  C_IND_H="${ih:-0}"; LITERAL_W="${lw:-"$WIDTH"}"
-  C_IND_W="${iw:-0}"; LITERAL_D="${ld:-"$DOCK"}"
-  fi
-}
+    function resolve_dock_pos(dock_string, space, dims)
+      local x_l = space.x
+      local x_r = space.x + space.width - dims.x
+      local x_c = space.x + (space.width - dims.x) / 2
+      local y_t = space.y
+      local y_b = space.y + space.height - dims.y
+      local y_c = space.y + (space.height - dims.y) / 2
+      local x = x_c
+      local y = y_c
 
-function unchanged {
-  local p="$(awk '{ print $1,$2,$3,$4,$5,$6 }' "$CTX_FILE" 2> /dev/null)"
-  local g="$(echo ${GAPS[@]} | tr " " ",")"
-  local c="$(hyprctl monitors \
-  | awk -v c="$HEIGHT $WIDTH $DOCK $g" '
-    /^Monitor/ { m = $2 }
-    /^\s*scale:/ { s = $2 }
-    /^\s*focused: yes/ { print m,s,c }')"
-  local c_inds="$C_IND_H $C_IND_W $C_IND_D"
-  local literals="$LITERAL_H $LITERAL_W $LITERAL_D"
-  echo "$c $c_inds $literals" > "$CTX_FILE"
-  [ "$c" == "$p" ]
+      for c in dock_string:gmatch('.') do
+        if c == 'c' then x = x_c; y = y_c
+        elseif c == 'u' or c == 't' then y = y_t
+        elseif c == 'd' or c == 'b' then y = y_b
+        elseif c == 'l' then x = x_l
+        elseif c == 'r' then x = x_r
+        end
+      end
+
+      return { x = x, y = y }
+    end
+
+    function setup_window(
+      workspace,
+      literal_dock,
+      literal_width,
+      literal_height,
+      default_dock,
+      default_width,
+      default_height,
+      last_dock,
+      last_width,
+      last_height,
+      last_resolved_dock,
+      last_resolved_width,
+      last_resolved_height,
+      last_dock_index,
+      last_width_index,
+      last_height_index,
+      clean_restore
+    )
+      local monitor = hl.get_monitor_at_cursor()
+      local reserved = monitor.reserved
+      local gaps = hl.get_config('general.gaps_out')
+      local border = hl.get_config('general.border_size')
+      local space = {
+        x = monitor.position.x + reserved.left + gaps.left + border,
+        y = monitor.position.y + reserved.top + gaps.bottom + border,
+        width = monitor.width - reserved.left - reserved.right - gaps.left - gaps.right - 2 * border,
+        height = monitor.height - reserved.top - reserved.bottom - gaps.top - gaps.bottom - 2 * border,
+      }
+  
+      local resolved_dock = resolve_value(literal_dock, last_dock, last_dock_index, default_dock, last_resolved_dock)
+      local resolved_width = resolve_value(literal_width, last_width, last_width_index, default_width, last_resolved_width)
+      local resolved_height = resolve_value(literal_height, last_height, last_height_index, default_height, last_resolved_height)
+      local dims = {
+        x = resolve_percentage(resolved_width.value, space.width),
+        y = resolve_percentage(resolved_height.value, space.height),
+      }
+
+      local pos = resolve_dock_pos(resolved_dock.value, space, dims)
+      hl.dispatch(hl.dsp.window.move({ workspace = 'special:'..workspace }))
+      if not hl.get_active_window().floating then hl.dispatch(hl.dsp.window.float()) end
+      hl.dispatch(hl.dsp.window.resize({ x = dims.x, y = dims.y, relative = false }))
+      hl.dispatch(hl.dsp.window.move({ x = pos.x, y = pos.y, relative = false }))
+
+      print('LAST_RESOLVED_DOCK=\"' .. resolved_dock.value .. '\"')
+      print('LAST_RESOLVED_WIDTH=\"' .. resolved_width.value .. '\"')
+      print('LAST_RESOLVED_HEIGHT=\"' .. resolved_height.value.. '\"')
+      print('LAST_DOCK=\"' .. (clean_restore and last_dock or literal_dock) .. '\"')
+      print('LAST_WIDTH=\"' .. (clean_restore and last_width or literal_width) .. '\"')
+      print('LAST_HEIGHT=\"' .. (clean_resotre and last_height or literal_height) .. '\"')
+      print('LAST_DOCK_INDEX=\"' .. (clean_restore and last_dock_index or resolved_dock.index) .. '\"')
+      print('LAST_WIDTH_INDEX=\"' .. (clean_restore and last_width_index or resolved_width.index) .. '\"')
+      print('LAST_HEIGHT_INDEX=\"' .. (clean_restore and last_height_index or resolved_height.index).. '\"')
+    end
+
+    setup_window(
+      '$WORKSPACE',
+      '$DOCK',
+      '$WIDTH',
+      '$HEIGHT',
+      '$DEFAULT_DOCK',
+      '$DEFAULT_WIDTH',
+      '$DEFAULT_HEIGHT',
+      '$LAST_DOCK',
+      '$LAST_WIDTH',
+      '$LAST_HEIGHT',
+      '$LAST_RESOLVED_DOCK',
+      '$LAST_RESOLVED_WIDTH',
+      '$LAST_RESOLVED_HEIGHT',
+      tonumber('$LAST_DOCK_INDEX') or 1,
+      tonumber('$LAST_WIDTH_INDEX') or 1,
+      tonumber('$LAST_HEIGHT_INDEX') or 1,
+      $CLEAN_RESTORE
+    )
+  " > "$CTX_FILE"
 }
 
 function already_open {
-  hyprctl clients | grep "class: $CMD_CLASS" > /dev/null
+  hyprctl repl 'for _, w in pairs(hl.get_windows()) do print(w.class) end' \
+  | grep -E "^$CMD_CLASS$"
 }
 
 function focused {
-  hyprctl activewindow | grep "class: $CMD_CLASS" > /dev/null
+  test "$(hyprctl repl 'hl.get_active_window().class')" = "$CMD_CLASS"
 }
 
 function in_ws {
-  hyprctl activewindow \
-  | grep -E "^\s*workspace:.+special:$WORKSPACE" > /dev/null
-}
-
-function save_setup {
-  hyprctl activewindow | awk '
-    /^\s*size:/ { split($2, a, ","); print "hyprctl dispatch '\''hl.dsp.window.resize({ x = " a[1] ", y = " a[2] ", relative = false })'\''"}
-    /^\s*at:/ { split($2, a, ","); print "hyprctl dispatch '\''hl.dsp.window.move({ x = " a[1] ", y = " a[2] ", relative = false })'\''"}
-  ' > "$SET_FILE"
+  test "$(hyprctl repl 'hl.get_active_window().workspace.name')" = "special:$WORKSPACE"
 }
 
 function open_cmd {
   hyprctl eval 'hl.window_rule({ name = "float-'"$CMD_CLASS"'", match = { class = "'"$CMD_CLASS"'" }, float = true })'
-  "$TERMINAL" --class "$CMD_CLASS" "$1" &
+  "$TERMINAL" --class "$CMD_CLASS" "$CMD_PROGRAM" &
   while true; do already_open && break; sleep 0.05; done
 }
 
@@ -180,36 +231,7 @@ function toggle_view {
   || hyprctl dispatch 'hl.dsp.focus({ window = "class:'"$CMD_CLASS"'" })'
 }
 
-function dock {
-  local _dir="$1"
-  [[ "$_dir" == t ]] && _dir=u
-  [[ "$_dir" == b ]] && _dir=d
-  hyprctl dispatch 'hl.dsp.window.move({ direction = "'"$_dir"'" })'
-  case "$1" in
-    u|t) hyprctl dispatch 'hl.dsp.window.move({ x = 0, y = '"$GAP_T"', relative = true })'  ;;
-    d|b) hyprctl dispatch 'hl.dsp.window.move({ x = 0, y = -'"$GAP_B"', relative = true })' ;;
-    l)   hyprctl dispatch 'hl.dsp.window.move({ x = '"$GAP_L"', y = 0, relative = true })'  ;;
-    r)   hyprctl dispatch 'hl.dsp.window.move({ x = -'"$GAP_R"', y = 0, relative = true })' ;;
-  esac
-}
-
-function setup {
-  [ -d "$CACHE_DIR" ] || mkdir -p "$CACHE_DIR"
-  in_ws || hyprctl dispatch 'hl.dsp.window.move({ workspace = "special:'"$WORKSPACE"'" })'
-  resolve_hwd && unchanged && sh "$SET_FILE" && return
-  hyprctl dispatch 'hl.dsp.window.float()'
-  hyprctl dispatch 'hl.dsp.window.resize({ x = "'"$WIDTH"'", y = "'"$HEIGHT"'", relative = false })'
-  local _pr=($(probe_reserved))
-  hyprctl dispatch 'hl.dsp.window.resize({ x = '"${_pr[0]}"', y = '"${_pr[1]}"', relative = true })'
-  hyprctl dispatch 'hl.dsp.window.center()'
-  hyprctl dispatch 'hl.dsp.window.move({ x = 0, y = '"$OFF_Y"', relative = true })'
-  while read -n1 d; do case "$d" in
-    u|t|d|b|l|r) dock "$d" ;;
-  esac; done <<< "$DOCK"
-  save_setup
-}
-
-already_open || open_cmd "$1"                   > /dev/null
+already_open || open_cmd                        > /dev/null
 focused && [ -n "$FORCE_FOCUS" ] || toggle_view > /dev/null
 focused && setup                                > /dev/null
 exit 0

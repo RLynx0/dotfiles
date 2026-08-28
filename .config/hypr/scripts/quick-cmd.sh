@@ -138,8 +138,8 @@ function setup {
       local space = {
         x = monitor.position.x + reserved.left + gaps.left + border,
         y = monitor.position.y + reserved.top + gaps.bottom + border,
-        width = monitor.width - reserved.left - reserved.right - gaps.left - gaps.right - 2 * border,
-        height = monitor.height - reserved.top - reserved.bottom - gaps.top - gaps.bottom - 2 * border,
+        width = monitor.width / monitor.scale - reserved.left - reserved.right - gaps.left - gaps.right - 2 * border,
+        height = monitor.height / monitor.scale - reserved.top - reserved.bottom - gaps.top - gaps.bottom - 2 * border,
       }
 
       local resolved_dock = resolve_value(config.dock, last.literal.dock, last.index.dock, default.dock, last.resolved.dock)

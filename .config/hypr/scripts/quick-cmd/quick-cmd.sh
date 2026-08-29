@@ -94,28 +94,38 @@ check_command hyprctl
 
 # Loads variables LAST_DOCK, LAST_WIDTH, ...
 source "$CTX_FILE" 2> /dev/null
+LAST_DOCK="${LAST_DOCK:-"$DEFAULT_DOCK"}"
+LAST_WIDTH="${LAST_WIDTH:-"$DEFAULT_WIDTH"}"
+LAST_HEIGHT="${LAST_HEIGHT:-"$DEFAULT_HEIGHT"}"
+LAST_RESOLVED_DOCK="${LAST_RESOLVED_DOCK:-"$DEFAULT_DOCK"}"
+LAST_RESOLVED_WIDTH="${LAST_RESOLVED_WIDTH:-"$DEFAULT_WIDTH"}"
+LAST_RESOLVED_HEIGHT="${LAST_RESOLVED_HEIGHT:-"$DEFAULT_HEIGHT"}"
+LAST_DOCK_INDEX="${LAST_DOCK_INDEX:-"1"}"
+LAST_WIDTH_INDEX="${LAST_WIDTH_INDEX:-"1"}"
+LAST_HEIGHT_INDEX="${LAST_HEIGHT_INDEX:-"1"}"
+
 
 function setup {
   # Set all required variables
   # Then include lua script from file
   hyprctl repl -- "
-    WORKSPACE            = '${WORKSPACE:-""}'
-    DEFAULT_DOCK         = '${DEFAULT_DOCK:-""}'
-    DEFAULT_WIDTH        = '${DEFAULT_WIDTH:-""}'
-    DEFAULT_HEIGHT       = '${DEFAULT_HEIGHT:-""}'
-    DOCK                 = '${DOCK:-""}'
-    WIDTH                = '${WIDTH:-""}'
-    HEIGHT               = '${HEIGHT:-""}'
-    LAST_DOCK            = '${LAST_DOCK:-""}'
-    LAST_WIDTH           = '${LAST_WIDTH:-""}'
-    LAST_HEIGHT          = '${LAST_HEIGHT:-""}'
-    LAST_RESOLVED_DOCK   = '${LAST_RESOLVED_DOCK:-""}'
-    LAST_RESOLVED_WIDTH  = '${LAST_RESOLVED_WIDTH:-""}'
-    LAST_RESOLVED_HEIGHT = '${LAST_RESOLVED_HEIGHT:-""}'
-    LAST_DOCK_INDEX      = '${LAST_DOCK_INDEX:-""}'
-    LAST_WIDTH_INDEX     = '${LAST_WIDTH_INDEX:-""}'
-    LAST_HEIGHT_INDEX    = '${LAST_HEIGHT_INDEX:-""}'
-    CLEAN_RESTORE        = ${CLEAN_RESTORE:-"false"}
+    WORKSPACE            = '${WORKSPACE}'
+    DEFAULT_DOCK         = '${DEFAULT_DOCK}'
+    DEFAULT_WIDTH        = '${DEFAULT_WIDTH}'
+    DEFAULT_HEIGHT       = '${DEFAULT_HEIGHT}'
+    DOCK                 = '${DOCK}'
+    WIDTH                = '${WIDTH}'
+    HEIGHT               = '${HEIGHT}'
+    LAST_DOCK            = '${LAST_DOCK}'
+    LAST_WIDTH           = '${LAST_WIDTH}'
+    LAST_HEIGHT          = '${LAST_HEIGHT}'
+    LAST_RESOLVED_DOCK   = '${LAST_RESOLVED_DOCK}'
+    LAST_RESOLVED_WIDTH  = '${LAST_RESOLVED_WIDTH}'
+    LAST_RESOLVED_HEIGHT = '${LAST_RESOLVED_HEIGHT}'
+    LAST_DOCK_INDEX      = '${LAST_DOCK_INDEX}'
+    LAST_WIDTH_INDEX     = '${LAST_WIDTH_INDEX}'
+    LAST_HEIGHT_INDEX    = '${LAST_HEIGHT_INDEX}'
+    CLEAN_RESTORE        = ${CLEAN_RESTORE}
   " \
   "$(cat "$LUA_SCRIPT_PATH")" \
   | tee /dev/stderr > "$CTX_FILE"

@@ -1,3 +1,23 @@
+-- This script is meant to be executed with `hyprctl repl`
+-- The following variables must be set beforehand:
+--   WORKSPACE
+--   DEFAULT_DOCK
+--   DEFAULT_WIDTH
+--   DEFAULT_HEIGHT
+--   DOCK
+--   WIDTH
+--   HEIGHT
+--   LAST_DOCK
+--   LAST_WIDTH
+--   LAST_HEIGHT
+--   LAST_RESOLVED_DOCK
+--   LAST_RESOLVED_WIDTH
+--   LAST_RESOLVED_HEIGHT
+--   LAST_DOCK_INDEX
+--   LAST_WIDTH_INDEX
+--   LAST_HEIGHT_INDEX
+--   CLEAN_RESTORE
+
 local function resolve_percentage(string_value, value_full)
   local percent = string_value:match('^(%-?[%d%.]+)%%')
   if (percent) then return ((tonumber(percent) or 100) / 100) * value_full end
@@ -44,7 +64,7 @@ local function setup_window(config, default, last)
   local border = hl.get_config('general.border_size')
   local space = {
     x = monitor.position.x + reserved.left + gaps.left + border,
-    y = monitor.position.y + reserved.top + gaps.bottom + border,
+    y = monitor.position.y + reserved.top + gaps.top + border,
     width = monitor.width / monitor.scale - reserved.left - reserved.right - gaps.left - gaps.right - 2 * border,
     height = monitor.height / monitor.scale - reserved.top - reserved.bottom - gaps.top - gaps.bottom - 2 * border,
   }

@@ -98,7 +98,7 @@ source "$CTX_FILE" 2> /dev/null
 function setup {
   # Set all required variables
   # Then include lua script from file
-  hyprctl repl "
+  hyprctl repl -- "
     WORKSPACE            = '${WORKSPACE:-""}'
     DEFAULT_DOCK         = '${DEFAULT_DOCK:-""}'
     DEFAULT_WIDTH        = '${DEFAULT_WIDTH:-""}'

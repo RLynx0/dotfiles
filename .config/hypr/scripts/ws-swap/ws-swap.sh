@@ -14,23 +14,12 @@
 #               |__/           |__/                          #
 
 
-target="$1"
-active="$(hyprctl activeworkspace | awk '{ print $3; exit }')"
-[ -z "$target" ] || [ "$target" == "$active" ] && exit
+readonly LUA_SCRIPT_PATH="$(dirname "$0")/ws-swap.lua"
+readonly TARGET_WS="$1"
 
-function windows_in_workspace {
-  hyprctl clients | awk -v a="$1" '
-    /^Window/ { w = $2 }
-    /^\s*workspace:/ && $2 == a { print w }'
-}
-
-function focus_and_move {
-  hyprctl dispatch 'hl.dsp.focus({ window = "address:0x'"$1"'" })'
-  hyprctl dispatch 'hl.dsp.window.move({ workspace = '"$2"' })'
-}
-
-echo "swapping from $active to $target"
-active_windows="$(windows_in_workspace $active)"
-target_windows="$(windows_in_workspace $target)"
-for w in $target_windows; do focus_and_move $w $active; done
-for w in $active_windows; do focus_and_move $w $target; done
+# Set all required variables
+# Then include lua script from file
+hyprctl repl -- "
+  TARGET_WS = '${TARGET_WS}'
+" \
+"$(cat "$LUA_SCRIPT_PATH")"

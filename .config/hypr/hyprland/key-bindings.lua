@@ -8,7 +8,7 @@ local clipboard     = "~/.config/scripts/clipboard.sh"
 local clipboardDelete = "~/.config/scripts/clipboard.sh delete"
 local emojiSelectorType = "pkill wofi || rofimoji --action type"
 local emojiSelectorCopy = "pkill wofi || rofimoji --action copy"
-local ws_swap       = "~/.config/hypr/scripts/ws-swap.sh"
+local ws_swap       = "~/.config/hypr/scripts/ws-swap/ws-swap.sh"
 local quick_cmd     = "~/.config/hypr/scripts/quick-cmd/quick-cmd.sh"
 local quick_cava    = quick_cmd .. " -H 65% -W 63% -d c cava"
 

@@ -35,6 +35,12 @@ hl.config({
         enabled = true,
     },
 
+    cursor = {
+        enable_hyprcursor = false,
+        -- Avoid corrupted hardware cursors on the eGPU output.
+        no_hardware_cursors = 1,
+    },
+
     dwindle = {
         preserve_split = true,
     },

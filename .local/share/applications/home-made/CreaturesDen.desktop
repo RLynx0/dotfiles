@@ -2,7 +2,7 @@
 Name=Creature's Den
 Comment=Open Creature's Den in Browser
 Exec=sh -c '$HOME/.config/scripts/librewolf-workspace.sh https://creatures-den.fly.dev'
-Icon=creatures-den_icon
+Icon=creatures-den
 Terminal=false
 Type=Application
 Categories=Network

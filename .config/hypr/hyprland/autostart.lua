@@ -10,10 +10,8 @@ hl.on("hyprland.start", function()
 
     hl.exec_cmd("easyeffects --gapplication-service")  -- #R: kill, exec
     hl.exec_cmd("wl-gammarelay-rs")                    -- #R: kill, exec
-    hl.exec_cmd("~/.config/waybar/start.sh")           -- #R: exec
-    hl.exec_cmd("waypaper --restore")                  -- #R: exec
+    hl.exec_cmd("noctalia")                            -- #R: kill, exec
     hl.exec_cmd("hypridle")                            -- #R: kill, exec
     hl.exec_cmd("fcitx5 -d")                           -- #R: kill, exec
-    hl.exec_cmd("mako")                                -- #R: kill, exec
-    hl.exec_cmd("sleep 1; setxkbmap de")              -- #R: exec
+    hl.exec_cmd("sleep 1; setxkbmap de")               -- #R: exec
 end)

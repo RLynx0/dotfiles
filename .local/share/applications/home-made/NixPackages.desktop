@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Nix Packages
+Comment=Open Creature's Den in Browser
+Exec=sh -c '$HOME/.config/scripts/librewolf-workspace.sh https://search.nixos.org/packages'
+Icon=nix-snowflake
+Terminal=false
+Type=Application
+Categories=Network
+

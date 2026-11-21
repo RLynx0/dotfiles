@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Mein Elba
+Comment=Open Mein Ebla in Browser
+Exec=sh -c '$HOME/.config/scripts/librewolf-workspace.sh https://mein.elba.raiffeisen.at/'
+Icon=raika_icon
+Terminal=false
+Type=Application
+Categories=Network;Finance
+Keywords=Raiffeisen;Raika;Banking;

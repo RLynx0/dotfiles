@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Flatex
+Comment=Open Flatex in Browser
+Exec=sh -c '$HOME/.config/scripts/librewolf-workspace.sh https://konto.flatex.at/'
+Icon=flatex_icon
+Terminal=false
+Type=Application
+Categories=Network;Finance
+Keywords=ETF;Trading;Banking;
